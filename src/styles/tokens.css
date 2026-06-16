@@ -1,0 +1,29 @@
+:root {
+  color-scheme: dark;
+  --bg-void: #050814;
+  --bg-panel: #0b1020;
+  --bg-panel-elevated: #11182c;
+  --bg-video-matte: #03050c;
+  --text-primary: #f6f8ff;
+  --text-secondary: #aab4d6;
+  --text-muted: #65708f;
+  --border-subtle: rgba(170, 190, 255, 0.18);
+  --border-strong: rgba(136, 166, 255, 0.42);
+  --energy-blue: #4da3ff;
+  --energy-cyan: #35e6d4;
+  --energy-purple: #8b5cf6;
+  --energy-violet: #b06cff;
+  --status-warning: #f6b84b;
+  --status-danger: #ff5c7a;
+  --status-success: #48e6a2;
+  --radius-panel: 6px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --font-ui: "Microsoft YaHei UI", "Noto Sans SC", system-ui, sans-serif;
+  --font-display: "Rajdhani", "Microsoft YaHei UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Consolas", monospace;
+}

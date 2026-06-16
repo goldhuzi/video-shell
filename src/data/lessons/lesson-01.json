@@ -1,0 +1,413 @@
+{
+  "schemaVersion": "0.3.0",
+  "meta": {
+    "projectId": "course-hud-demo-001",
+    "projectName": "AI Tactical Course HUD Demo",
+    "courseTitle": "AI Course Operating System",
+    "lessonTitle": "Build a Signal Intake Loop",
+    "chapterTitle": "Mission 01: Source Discipline",
+    "lessonNumber": "Lesson 01",
+    "lessonIndex": 1,
+    "totalLessons": 6,
+    "courseCode": "HUD-OPS",
+    "statusLabel": "MISSION LIVE",
+    "mainMission": "Turn rough references into a reliable course input queue.",
+    "description": "A compact sample lesson for validating schema, editor preview, and Remotion HUD rendering.",
+    "canvas": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30
+    },
+    "createdAt": "2026-06-16T00:00:00.000Z"
+  },
+  "media": {
+    "mainVideo": {
+      "id": "media-main-lesson-01",
+      "kind": "main_video",
+      "label": "Main course capture",
+      "src": "/input/videos/lesson-01-main-placeholder.mp4",
+      "duration": 360,
+      "width": 1920,
+      "height": 1080,
+      "mimeType": "video/mp4",
+      "required": true
+    },
+    "lecturerVideo": {
+      "id": "media-speaker-lesson-01",
+      "kind": "lecturer_video",
+      "label": "Lecturer window",
+      "src": "/input/videos/lesson-01-speaker-placeholder.mp4",
+      "duration": 340,
+      "width": 720,
+      "height": 720,
+      "mimeType": "video/mp4",
+      "required": false
+    },
+    "lecturerAvatar": {
+      "id": "media-avatar-lesson-01",
+      "kind": "avatar",
+      "label": "Speaker avatar fallback",
+      "src": "/input/images/speaker-avatar-placeholder.png",
+      "width": 1024,
+      "height": 1024,
+      "mimeType": "image/png",
+      "required": false
+    },
+    "speakerVideo": {
+      "id": "media-speaker-lesson-01",
+      "kind": "lecturer_video",
+      "label": "Lecturer window",
+      "src": "/input/speakers/lesson-01-speaker-placeholder.mp4",
+      "duration": 340,
+      "width": 720,
+      "height": 720,
+      "mimeType": "video/mp4",
+      "required": false
+    },
+    "speakerImage": {
+      "id": "media-avatar-lesson-01",
+      "kind": "avatar",
+      "label": "Speaker avatar fallback",
+      "src": "/input/images/speaker-avatar-placeholder.png",
+      "width": 1024,
+      "height": 1024,
+      "mimeType": "image/png",
+      "required": false
+    },
+    "useSpeakerVideo": true,
+    "mainVideoFitMode": "contain",
+    "hudAssets": []
+  },
+  "speaker": {
+    "name": "Course Operator",
+    "title": "Solo creator workflow coach",
+    "bio": "Used only for editor context in this sample.",
+    "displayMode": "video",
+    "positionPreset": "bottom-left",
+    "assetPriority": ["video", "avatar", "identity_card", "hidden"],
+    "missingAssetBehavior": "fallback_to_avatar"
+  },
+  "layout": {
+    "aspectRatio": "16:9",
+    "showTopHeader": true,
+    "showRightPanel": true,
+    "showBottomHud": true,
+    "showLecturerCard": true,
+    "showCourseStageBar": true,
+    "canvas": {
+      "width": 1920,
+      "height": 1080
+    },
+    "mainVideoFitMode": "contain",
+    "mainVideoSafeArea": {
+      "showGuideInEditor": true,
+      "protectedRegions": ["center"],
+      "notes": "Keep the main tutorial action readable; HUD stays in fixed top, right, and bottom regions."
+    },
+    "topHeader": {
+      "visible": true,
+      "showCurrentStage": true
+    },
+    "rightSidebar": {
+      "visible": true,
+      "displayMode": "full"
+    },
+    "stageBar": {
+      "visible": true,
+      "displayMode": "standard"
+    },
+    "lecturer": {
+      "visible": true,
+      "positionPreset": "bottom-left"
+    },
+    "bottomStatusHud": {
+      "visible": true
+    }
+  },
+  "warning": {
+    "defaultHintId": "hint-orient-default",
+    "items": [
+      {
+        "id": "hint-orient-default",
+        "hintType": "key_point",
+        "title": "Mission focus",
+        "body": "Keep only sources that can support one clear lesson decision.",
+        "stageId": "stage-orient",
+        "defaultDuration": 6
+      },
+      {
+        "id": "hint-filter-warning",
+        "hintType": "warning",
+        "title": "Avoid source drift",
+        "body": "Do not mix inspiration, proof, and production notes in one bucket.",
+        "stageId": "stage-filter",
+        "defaultDuration": 8
+      },
+      {
+        "id": "hint-package-summary",
+        "hintType": "summary",
+        "title": "Ready to package",
+        "body": "A useful input queue has a topic, evidence, and one next action.",
+        "stageId": "stage-package",
+        "defaultDuration": 7
+      },
+      {
+        "id": "hint-homework",
+        "hintType": "homework",
+        "title": "After class",
+        "body": "Create one source queue for your next paid lesson.",
+        "stageId": "stage-package",
+        "defaultDuration": 8
+      }
+    ]
+  },
+  "tasks": [
+    {
+      "id": "task-collect",
+      "label": "Collect raw sources",
+      "title": "Collect raw sources",
+      "description": "Bring candidate references into one local folder.",
+      "stageId": "stage-orient",
+      "order": 0,
+      "defaultStatus": "current",
+      "autoCompletePrevious": true
+    },
+    {
+      "id": "task-filter",
+      "label": "Filter by lesson value",
+      "title": "Filter by lesson value",
+      "description": "Keep sources that answer a concrete learner question.",
+      "stageId": "stage-filter",
+      "order": 1,
+      "defaultStatus": "not_started",
+      "autoCompletePrevious": true
+    },
+    {
+      "id": "task-package",
+      "label": "Package teaching inputs",
+      "title": "Package teaching inputs",
+      "description": "Turn selected sources into a lesson-ready packet.",
+      "stageId": "stage-package",
+      "order": 2,
+      "defaultStatus": "not_started",
+      "autoCompletePrevious": true
+    }
+  ],
+  "chapterMap": {
+    "displayMode": "vertical_route",
+    "nodes": [
+      {
+        "id": "node-orient",
+        "label": "Orient",
+        "stageId": "stage-orient",
+        "order": 0,
+        "defaultStatus": "current"
+      },
+      {
+        "id": "node-filter",
+        "label": "Filter",
+        "stageId": "stage-filter",
+        "order": 1,
+        "defaultStatus": "not_started"
+      },
+      {
+        "id": "node-package",
+        "label": "Package",
+        "stageId": "stage-package",
+        "order": 2,
+        "defaultStatus": "not_started"
+      }
+    ]
+  },
+  "stages": [
+    {
+      "id": "stage-orient",
+      "label": "Mission Orientation",
+      "name": "Mission Orientation",
+      "shortName": "Orient",
+      "startTime": 0,
+      "endTime": 118,
+      "mapNodeId": "node-orient",
+      "defaultTaskId": "task-collect",
+      "defaultHintId": "hint-orient-default",
+      "order": 0,
+      "enabled": true
+    },
+    {
+      "id": "stage-filter",
+      "label": "Signal Filtering",
+      "name": "Signal Filtering",
+      "shortName": "Filter",
+      "startTime": 118,
+      "endTime": 248,
+      "mapNodeId": "node-filter",
+      "defaultTaskId": "task-filter",
+      "defaultHintId": "hint-filter-warning",
+      "order": 1,
+      "enabled": true
+    },
+    {
+      "id": "stage-package",
+      "label": "Lesson Packet Assembly",
+      "name": "Lesson Packet Assembly",
+      "shortName": "Package",
+      "startTime": 248,
+      "endTime": 360,
+      "mapNodeId": "node-package",
+      "defaultTaskId": "task-package",
+      "defaultHintId": "hint-package-summary",
+      "order": 2,
+      "enabled": true
+    }
+  ],
+  "timelineEvents": [
+    {
+      "id": "event-stage-filter",
+      "type": "stage_change",
+      "startTime": 118,
+      "targetComponent": "course_stage_bar",
+      "payload": {
+        "stageId": "stage-filter",
+        "status": "current",
+        "syncMapNode": true,
+        "syncDefaultTask": true,
+        "syncDefaultHint": true
+      },
+      "priority": 80,
+      "enabled": true,
+      "label": "Enter filtering stage"
+    },
+    {
+      "id": "event-map-filter",
+      "type": "map_node_activate",
+      "startTime": 118,
+      "targetComponent": "chapter_map",
+      "payload": {
+        "mapNodeId": "node-filter",
+        "state": "current",
+        "completePrevious": true
+      },
+      "animation": {
+        "enter": "node_glow",
+        "durationMs": 300
+      },
+      "priority": 70,
+      "enabled": true
+    },
+    {
+      "id": "event-task-filter",
+      "type": "task_update",
+      "startTime": 124,
+      "targetComponent": "task_tracker",
+      "payload": {
+        "taskId": "task-filter",
+        "state": "current",
+        "autoCompletePrevious": true
+      },
+      "priority": 75,
+      "enabled": true
+    },
+    {
+      "id": "event-warning-filter",
+      "type": "hint_show",
+      "startTime": 150,
+      "endTime": 160,
+      "targetComponent": "warning_panel",
+      "payload": {
+        "hintId": "hint-filter-warning",
+        "hintType": "warning",
+        "title": "Avoid source drift",
+        "body": "Separate proof from inspiration before you script.",
+        "syncBottomStatus": true
+      },
+      "animation": {
+        "enter": "fade_up",
+        "exit": "fade",
+        "durationMs": 220
+      },
+      "priority": 90,
+      "enabled": true
+    },
+    {
+      "id": "event-stage-package",
+      "type": "stage_change",
+      "startTime": 248,
+      "targetComponent": "course_stage_bar",
+      "payload": {
+        "stageId": "stage-package",
+        "status": "current",
+        "syncMapNode": true,
+        "syncDefaultTask": true,
+        "syncDefaultHint": true
+      },
+      "priority": 80,
+      "enabled": true,
+      "label": "Enter package stage"
+    },
+    {
+      "id": "event-skill-packet",
+      "type": "skill_unlock",
+      "startTime": 270,
+      "endTime": 276,
+      "targetComponent": "bottom_status_hud",
+      "payload": {
+        "skillId": "skill-source-packet",
+        "title": "Skill unlocked: Source packet",
+        "body": "You can now package raw references for scripting.",
+        "mapNodeId": "node-package",
+        "syncMapNode": true
+      },
+      "animation": {
+        "enter": "pulse",
+        "exit": "fade",
+        "durationMs": 320
+      },
+      "priority": 85,
+      "enabled": true
+    },
+    {
+      "id": "event-summary-package",
+      "type": "stage_summary",
+      "startTime": 316,
+      "endTime": 326,
+      "targetComponent": "warning_panel",
+      "payload": {
+        "stageId": "stage-package",
+        "title": "Mission complete",
+        "body": "Your next lesson now has a filtered source packet.",
+        "markStageCompleted": true,
+        "syncBottomStatus": true
+      },
+      "priority": 88,
+      "enabled": true
+    },
+    {
+      "id": "event-homework",
+      "type": "homework_reminder",
+      "startTime": 340,
+      "endTime": 354,
+      "targetComponent": "warning_panel",
+      "payload": {
+        "title": "After class",
+        "body": "Build one source packet for your own next course video.",
+        "actionLabel": "Prepare one packet",
+        "taskId": "task-package",
+        "syncTaskTracker": true,
+        "syncBottomStatus": true
+      },
+      "priority": 92,
+      "enabled": true
+    }
+  ],
+  "render": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "format": "mp4",
+    "outputName": "lesson-01-hud.mp4",
+    "outputDir": "out/renders",
+    "videoCodec": "h264",
+    "audioEnabled": true,
+    "quality": "standard"
+  }
+}
