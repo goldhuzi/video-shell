@@ -16,3 +16,5 @@ public/input/videos/*.mkv
 public/input/speakers/*.mp4
 public/input/speakers/*.mov
 public/input/speakers/*.mkv
+public/input/images/*
+!public/input/images/.gitkeep

@@ -30,24 +30,33 @@
 
 ## 🧭 当前状态
 
-项目已进入第 3 阶段：工程骨架搭建。
+项目已完成第 6 阶段：本地单节课渲染链路，并完成第 6 阶段审查与审查问题整改。当前命令链路已接入，可对 lesson JSON 执行 HUD 状态测试、渲染前检查、8 秒 smoke MP4 渲染、关键帧 still、片段 clip 和正式单节课 MP4 渲染；新增 `lesson-render-fixture` 安全小样已跑通成功出片路径。示例 `lesson-01` 的主视频仍是占位路径，替换为真实授权课程素材前仍会按预期被预检阻断。
 
 已经具备：
 
 1. React + TypeScript + Vite 本地编辑器骨架。
 2. Remotion Studio 与 `CourseShellComposition` 渲染入口。
 3. `lesson-01.json` 示例配置。
-4. Zod schema 校验。
-5. 最小时间轴状态计算。
-6. HUD 组件占位实现。
-7. 测试 MP4 渲染脚本。
+4. Zod schema 校验和编辑器错误列表。
+5. 共享 HUD 时间轴状态推导。
+6. 可编辑课程信息、讲师信息、素材路径、任务、地图节点和阶段的配置编辑器 MVP。
+7. 浏览器下载 `lesson-01.edited.json` 的配置导出能力。
+8. 阶段新增、编辑、删除、跳转和“使用当前时间”写入。
+9. 时间轴事件新增、编辑、删除、启用/禁用、payload 表单和 active event 高亮。
+10. 编辑器画框外 HTML video 控制器，可读取主视频 `currentTime` 和 `duration`。
+11. 渲染前检查脚本，主视频缺失作为正式渲染阻断错误。
+12. 正式 `render:lesson` 与 8 秒 `render:smoke` 单节课渲染脚本。
+13. `deriveHudState` 关键时间点可复跑测试脚本。
+14. `render:still` 与 `render:clip` 关键帧/片段验收脚本。
+15. `lesson-render-fixture.json` 安全小样配置，以及本地忽略的合成测试素材。
+16. `npm test` 聚合 lesson schema、HUD 状态和 preflight 回归测试。
 
 仍在建设：
 
-1. 真实配置编辑、保存、导入和导出。
-2. 素材路径检查和渲染前检查。
-3. 完整时间轴状态测试。
-4. 真实课程素材下的成片验收。
+1. 导入已导出的 lesson JSON。
+2. lesson JSON 导入和可选的本地写回体验探索。
+3. 用户真实课程素材样片库。
+4. lesson JSON 导入和本地写回体验。
 5. 编辑器 HUD 与 Remotion HUD 的进一步收敛。
 
 ## 🛠 技术栈
@@ -76,6 +85,23 @@ npm run dev
 
 默认地址：`http://127.0.0.1:5173`
 
+编辑配置：
+
+1. 在右侧属性面板修改课程信息、讲师信息、素材路径、默认重点提示、任务名称、地图节点名称和阶段名称/时间。
+2. 在底部“阶段”视图新增、编辑、删除阶段，点击阶段跳转到 `startTime`，或用“开始=当前 / 结束=当前”写入当前视频时间。
+3. 在底部“事件”视图新增、编辑、删除 `timelineEvents`，配置事件类型、目标模块、开始/结束时间、优先级、enabled 和 payload。
+4. 使用画框外的视频控制器播放、暂停或拖动主视频；主视频缺失时仍可手动输入 `previewTime` 继续配置 HUD。
+5. 点击“校验配置”查看 schema 校验结果。
+6. 点击“导出配置”下载 `lesson-01.edited.json`。当前“保存配置”按钮不直接写回文件，会提示使用导出配置。
+
+将导出的配置用于渲染：
+
+1. 用导出的 JSON 内容替换 `src/data/lessons/lesson-01.json`，或按后续脚本支持另存为新的 lesson 文件。
+2. 运行 `npm run validate:lessons` 确认配置合法。
+3. 运行 `npm run test:hud` 检查关键时间点 HUD 状态。
+4. 运行 `npm run preflight:render -- lesson-01` 检查主视频、输出目录、时长和时间轴规则。
+5. 主视频素材补齐后，运行 `npm run render:lesson -- lesson-01` 渲染正式 MP4。
+
 启动 Remotion Studio：
 
 ```bash
@@ -101,6 +127,28 @@ npm run render:sample
 ```
 
 输出位置：`out/lesson-01-sample.mp4`
+
+第 6 阶段单节课渲染命令：
+
+```bash
+npm run preflight:render -- lesson-01
+npm run render:smoke -- lesson-01
+npm run render:still -- lesson-01
+npm run render:clip -- lesson-01 --from 145 --duration 20
+npm run render:lesson -- lesson-01
+```
+
+`render:smoke` 输出 8 秒 MP4 到 `out/{lessonId}-smoke.mp4`。`render:still` 默认输出关键帧 PNG 到 `out/stills/{lessonId}/`，可用 `--times 36,118,150` 指定秒数。`render:clip` 默认输出 MP4 到 `out/clips/`，可用 `--from` 和 `--duration` 指定片段窗口。`render:lesson` 输出路径来自 lesson 的 `render.outputDir` 与 `render.outputName`，示例为 `out/lesson-01-final.mp4`。
+
+本地安全小样成功路径：
+
+```bash
+npm run preflight:render -- lesson-render-fixture
+npm run render:smoke -- lesson-render-fixture
+npm run render:still -- lesson-render-fixture --times 2,7,10
+npm run render:clip -- lesson-render-fixture --from 2 --duration 4
+npm run render:lesson -- lesson-render-fixture
+```
 
 更完整的启动说明见 [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md) 和 [docs/en/GETTING_STARTED.md](docs/en/GETTING_STARTED.md)。
 
@@ -142,6 +190,7 @@ video-shell/
 11. `public/input/speakers/*.mov`
 12. `public/input/videos/*.mkv`
 13. `public/input/speakers/*.mkv`
+14. `public/input/images/*`
 
 素材建议放置位置：
 
@@ -224,6 +273,21 @@ video-shell/
 
 - [第 3 阶段实现说明](docs/STAGE_3_IMPLEMENTATION_NOTES.md)
 
+### 第 4 阶段：数据模型与配置编辑器 MVP
+
+- [第 4 阶段编辑器 MVP 实现说明](docs/STAGE_4_EDITOR_MVP_NOTES.md)
+- [第 4 阶段编辑器 MVP 审查报告](docs/STAGE_4_EDITOR_MVP_REVIEW.md)
+
+### 第 5 阶段：时间轴编辑与联动预览
+
+- [第 5 阶段时间轴编辑与联动预览实现说明](docs/STAGE_5_TIMELINE_EDITOR_NOTES.md)
+- [第 5 阶段时间轴编辑与联动预览审查报告](docs/STAGE_5_TIMELINE_EDITOR_REVIEW.md)
+
+### 第 6 阶段：本地单节课渲染链路
+
+- [第 6 阶段渲染器说明与交接](docs/STAGE_6_RENDERER_NOTES.md)
+- [第 6 阶段渲染器审查报告](docs/STAGE_6_RENDERER_REVIEW.md)
+
 ### Agent 协作
 
 - [项目总指挥 Agent 设计](docs/AGENT_ORCHESTRATOR_SPEC.md)
@@ -239,11 +303,131 @@ MIT License. See [LICENSE](LICENSE).
 
 ## 🔭 下一阶段建议
 
-1. 实现 lesson 配置的真实编辑、保存和导入导出。
-2. 增加素材路径检查脚本，区分主视频阻断错误和讲师/头像降级警告。
-3. 给 `deriveHudState` 增加测试，覆盖阶段、任务、地图、提示和短时事件消失。
-4. 准备一组真实小体积测试素材，验证主视频音频、讲师视频和头像 fallback。
-5. 合并编辑器预览 HUD 与 Remotion HUD 的重复实现，降低后续漂移风险。
+1. 准备用户授权真实课程素材，替换 `lesson-01` 的占位主视频、讲师视频和头像。
+2. 增加 lesson JSON 导入能力，支持导出的配置重新进入编辑器。
+3. 合并编辑器预览 HUD 与 Remotion HUD 的无交互展示组件，降低后续漂移风险。
+4. 补充非程序员友好的预检错误说明和发布前检查清单。
+5. 增加更完整的视觉验收说明，沉淀 fixture still/clip 对照图。
+
+## 第 6 阶段成果记忆
+
+阶段目标：
+1. 将第 5 阶段的时间轴联动预览推进到本地单节课 MP4 渲染链路。
+2. 建立正式渲染前检查、HUD 状态测试、音频路由和 smoke 渲染命令。
+3. 保持最终 Remotion composition 无播放器控件、无编辑器控件。
+
+已完成：
+1. 新增 `preflight:render`，检查 lesson schema、画布、输出路径、素材路径、时长、音频策略和 timeline 规则。
+2. 新增 `render:lesson`，按 lesson id 读取配置并输出 1920 x 1080 MP4。
+3. 新增 `render:smoke`，输出 8 秒 MP4 用于快速检查 composition。
+4. 新增 `test:hud`，覆盖 117/118/124/150/248/270/316/340/355 秒等关键 HUD 状态。
+5. Remotion composition 已按 `frame / fps` 推导 `currentTime`，复用 `deriveHudState` 渲染主视频、讲师层和 HUD。
+6. 第 6 阶段文档已记录渲染命令、素材规则、音频策略、时长规则和已知限制。
+7. Course HUD Director Agent 已按渲染工程、数据预检、事实边界和证据验收岗位并行复查，补齐讲师音频、素材 fallback、HUD 显示开关、schema 引用检查和文档事实边界。
+
+关键产物：
+1. `scripts/preflight-render.ts`：渲染前检查入口。
+2. `scripts/render-lesson.ts`：正式单节课渲染入口。
+3. `scripts/render-smoke.ts`：8 秒 smoke 渲染入口。
+4. `scripts/test-hud-state.ts`：HUD 状态关键时间点测试。
+5. `src/remotion/CourseShellComposition.tsx` 与 `src/remotion/layers/*`：第 6 阶段最终视频 composition。
+6. `docs/STAGE_6_RENDERER_NOTES.md`：第 6 阶段渲染器说明与交接。
+
+已冻结决策：
+1. 主视频是正式渲染 P0 素材，缺失时 `preflight:render`、`render:smoke` 和 `render:lesson` 均退出非 0。
+2. 讲师视频和头像按 `speaker.missingAssetBehavior` 降级；`speaker-only` 音频要求讲师视频存在，并会强制使用讲师视频作为讲师音频来源。
+3. 默认音频为 `main-only`；`mix` 会强制使用讲师视频并给出回声风险提示，缺讲师视频时 preflight 会报 error。
+4. `mainVideoFitMode` 正式渲染优先读取 `layout.mainVideoFitMode`，默认 `contain`。
+5. CourseStageBar 仍是学习导航，不是播放器进度条。
+6. 最终画面无控件边界通过代码审查和静态扫描确认，当前 `preflight:render` 不自动证明画面无控件。
+
+后续接手注意：
+1. 当前示例 `lesson-01` 主视频仍是占位路径，预检失败是预期行为，不代表渲染链路坏了。
+2. `render:sample` 仍可用作开发样片，但不能代表真实素材链路验收。
+3. `render:smoke` 只输出 8 秒基础样片，不覆盖后半段关键时间点；关键片段 still 验收留到下一阶段。
+4. 当前脚本按 lesson id 读取 `src/data/lessons/{lessonId}.json`，暂不支持 CLI 指定任意 JSON 路径或输出路径。
+5. 第 6 阶段未做云端渲染、批量队列、自动字幕、AI 自动识别、多轨剪辑或专业混音。
+6. 本次验证通过 `typecheck`、`validate:lessons`、`test:hud`、`build`、`render:sample`、Vite dev 入口、Remotion Studio 入口和 Remotion 控件静态扫描。
+7. 第 6 阶段审查整改已补齐安全小样成功路径、`mix` 缺讲师视频 error、still/clip 脚本、编辑器渲染按钮提示、输出覆盖提示和 `npm test` 聚合脚本。
+
+下一阶段建议：
+1. 准备用户授权真实主视频、讲师视频和头像，替换 `lesson-01` 并跑通真实课程成功路径。
+2. 增加 lesson JSON 导入能力。
+3. 收敛编辑器预览 HUD 与 Remotion HUD 的无交互展示组件。
+4. 扩展 still/clip 验收说明和发布前检查清单。
+
+## 第 6 阶段审查成果记忆
+
+阶段目标：
+1. 根据附件要求审查第 6 阶段本地单节课渲染链路。
+2. 按 Course HUD Director Agent 工作流分配渲染工程、事实边界和证据验收岗位。
+3. 判断是否允许进入第 7 阶段，并明确必须继承的风险。
+
+已完成：
+1. 已审查 `package.json` 渲染脚本、preflight/render/smoke 工具、Remotion composition、媒体层、音频路由、HUD runtime 和编辑器导出衔接。
+2. 已运行 `typecheck`、`validate:lessons`、`test:hud`、`build`、`render:sample`、Vite dev、Remotion Studio、正式 preflight/smoke/render 阻断验证和 `src/remotion` 控件静态扫描。
+3. 已确认 `render:lesson`、`render:smoke` 会先跑 preflight，当前因占位主视频缺失按预期退出非 0。
+4. 已新增正式审查报告，结论为有条件通过，无 P0 阻断项。
+
+关键产物：
+1. `docs/STAGE_6_RENDERER_REVIEW.md`：第 6 阶段渲染器审查报告，包含 P0/P1/P2、评分、命令结果、风险清单和第 7 阶段交接建议。
+
+已冻结决策：
+1. 第 6 阶段审查结论为有条件通过，允许进入第 7 阶段前置验收与视觉精修准备。
+2. 在真实授权素材跑通 `preflight:render`、`render:smoke` 和 `render:lesson` 成功路径前，不能宣称真实素材稳定出片或生产就绪。
+3. 当前无最终视频控件边界 P0；`src/remotion` 静态扫描未发现播放器控件、表单控件或编辑器组件。
+4. 审查时发现 `audio.mode=mix` 缺讲师视频只 warning 的语义偏弱；整改后已收紧为 error。
+
+后续接手注意：
+1. 示例 `lesson-01` 仍使用占位主视频，正式渲染失败是预检保护，不是 Remotion composition 崩溃。
+2. `render:sample` 成功只代表开发 fallback 样片，不代表真实素材链路验收。
+3. 第 7 阶段需补 still/clip 视觉验收，`test:hud` 只证明状态语义。
+4. 编辑器“渲染”按钮仍是旧占位提示，需改为第 6 阶段 CLI 渲染与预检指引。
+
+下一阶段建议：
+1. 先补授权安全真实素材，并跑通完整成功路径。
+2. 再补 `mix` 预检语义、still/clip 验收和 lesson JSON 导入。
+3. 最后做 HUD 展示组件收敛和视觉定稿。
+
+## 第 6 阶段审查整改成果记忆
+
+阶段目标：
+1. 解决第 6 阶段审查报告中的 P1/P2 可落地问题。
+2. 用本地安全合成素材跑通正式成功出片路径。
+3. 保持项目边界：不提交真实课程素材，不引入云端、批量队列或播放器功能。
+
+已完成：
+1. `audio.mode=mix` 缺讲师视频已从 warning 收紧为 error，并新增 `test:preflight` 回归测试。
+2. 新增 `render:still` 和 `render:clip`，均复用正式 preflight，不绕过主视频阻断。
+3. 新增 `lesson-render-fixture.json`，并用本地 FFmpeg 生成 ignored 合成主视频、讲师视频和头像。
+4. 已跑通 `preflight:render`、`render:smoke`、`render:still`、`render:clip` 和 `render:lesson` 的 fixture 成功路径。
+5. 已用 `ffprobe` 确认 `out/lesson-render-fixture-final.mp4` 为 1920 x 1080、30fps、12 秒。
+6. 已更新编辑器“渲染”按钮提示，不再指向旧的第 6 阶段占位文案。
+7. 已增加输出覆盖日志和 `npm test` 聚合脚本。
+8. Remotion/browser 端素材解析已收紧，不再放行远程 URL、本机绝对路径或 `file:` / `data:` / `blob:`。
+
+关键产物：
+1. `scripts/test-preflight-render.ts`：渲染预检回归测试。
+2. `scripts/render-still.ts`：关键帧 still 渲染脚本。
+3. `scripts/render-clip.ts`：片段 clip 渲染脚本。
+4. `src/data/lessons/lesson-render-fixture.json`：第 6 阶段安全小样 lesson 配置。
+5. `out/lesson-render-fixture-final.mp4`：本地验证输出，受 `.gitignore` 排除。
+
+已冻结决策：
+1. `mix` 必须有讲师视频才能通过正式 preflight。
+2. `render:still` / `render:clip` 必须先跑 preflight。
+3. 安全小样素材可本地生成用于验收，但不提交到 Git。
+4. `lesson-01` 继续保留占位素材语义，等待用户真实授权素材替换。
+
+后续接手注意：
+1. `lesson-render-fixture` 证明脚本链路可出片，不代表用户真实课程素材已验收。
+2. 生成的 `public/input/videos/stage6-review-main.mp4`、`public/input/speakers/stage6-review-speaker.mp4`、`public/input/images/stage6-review-avatar.png` 均为 ignored 本地素材。
+3. 输出 `out/*` 仍不提交。
+
+下一阶段建议：
+1. 用用户真实授权素材替换 `lesson-01` 并跑同一组命令。
+2. 增加 lesson JSON 导入。
+3. 做 HUD 展示组件收敛和视觉定稿。
 
 ## 第 3 阶段成果记忆
 
@@ -323,3 +507,132 @@ MIT License. See [LICENSE](LICENSE).
 下一阶段建议：
 1. 完成 GitHub 远端发布后，在仓库 About 中补充 description、topics 和 website。
 2. 后续如准备吸引外部贡献者，可再补 issue template、PR template 和示例截图。
+
+## 第 4 阶段成果记忆
+
+阶段目标：
+1. 将编辑器从占位页推进到可编辑 lesson 配置的 MVP。
+2. 支持核心课程信息、素材路径、讲师信息、任务、地图节点、阶段名称和阶段时间的表单编辑。
+3. 打通 schema 校验、错误提示、配置导出和预览即时更新。
+
+已完成：
+1. 新增 editor state，编辑器启动时从 `lesson-01.json` 初始化草稿状态。
+2. 右侧属性面板支持编辑课程、讲师、素材、默认重点提示、任务、地图、阶段和布局开关。
+3. 底部阶段配置区支持编辑阶段名称、`startTime`、`endTime`，并通过 `previewTime` 驱动 active stage。
+4. 顶部工具栏支持校验、导出、保存占位、预览刷新和渲染占位。
+5. 导出配置会先校验，校验通过后下载格式化的 `lesson-01.edited.json`。
+6. schema 已收紧任务 label、阶段 label、阶段时间顺序、阶段重叠和课程序号校验。
+7. Remotion 继续读取同一份 lesson 结构，最终 composition 未引入播放器控件或编辑器控件。
+
+关键产物：
+1. `src/editor/state/editorState.ts`：编辑器草稿、校验、导出状态。
+2. `src/editor/utils/validateEditorLesson.ts`：编辑器 schema 校验和错误路径映射。
+3. `src/editor/utils/exportLesson.ts`：lesson 导出和 fit mode 字段规范化。
+4. `src/editor/PropertyPanel.tsx`：第 4 阶段核心配置表单。
+5. `src/editor/TimelinePanel.tsx`：简化阶段配置和校验视图。
+6. `docs/STAGE_4_EDITOR_MVP_NOTES.md`：第 4 阶段实现说明、限制和后续建议。
+7. `docs/STAGE_4_EDITOR_MVP_REVIEW.md`：第 4 阶段审查报告，结论为有条件通过。
+
+已冻结决策：
+1. 第 4 阶段优先支持“导出配置”，不直接写回本地文件。
+2. 保存按钮只提示使用导出配置，不引入后端、数据库或复杂本地写文件链路。
+3. 渲染按钮保持占位提示，第 6 阶段再完善完整渲染流程。
+4. 任务、地图节点、阶段第一版固定数量，只编辑名称和简单时间。
+5. 编辑器预览画框内继续只放最终视频内容和 HUD，不放播放器控件。
+
+后续接手注意：
+1. 当前浏览器端不检查素材文件是否真实存在；素材缺失仍由预览和 Remotion fallback 占位承接。
+2. `lesson-01.edited.json` 需要手动替换 `src/data/lessons/lesson-01.json` 后再用于现有渲染脚本。
+3. `timelineEvents` 暂未进入可编辑表单，第 5 阶段应优先补简化事件编辑。
+4. Remotion `HudLayer` 仍是内联 HUD 实现，和编辑器共享组件尚未完全合并。
+5. 第 4 阶段审查结论为“有条件通过”，进入第 5 阶段前建议先处理加载失败提示、字段级错误定位和表单拆分。
+
+下一阶段建议：
+1. 增加导入配置能力。
+2. 增加素材路径检查脚本和编辑器素材状态校验。
+3. 实现第 5 阶段简化时间轴事件编辑。
+4. 为 `deriveHudState` 增加单元测试。
+5. 逐步统一编辑器预览 HUD 与 Remotion HUD 组件。
+
+## 第 5 阶段成果记忆
+
+阶段目标：
+1. 将第 4 阶段配置编辑器升级为“时间轴编辑与联动预览 MVP”。
+2. 支持主视频 currentTime / previewTime 驱动 HUD 状态变化。
+3. 支持课程阶段和时间轴事件的新增、编辑、删除、跳转和导出。
+
+已完成：
+1. 新增编辑器画框外 `VideoPreviewController`，支持播放、暂停、拖动、读取视频时长和主视频缺失提示。
+2. 阶段视图支持新增、编辑、删除、点击跳转、active stage 高亮，以及“开始=当前 / 结束=当前”。
+3. 事件视图支持新增、编辑、删除、启用/禁用、type、targetComponent、startTime、endTime、priority 和 payload 表单。
+4. `src/utils/timeline.ts` 重写为共享 HUD 状态推导，覆盖阶段、地图、任务、提示、能力解锁、总结和作业提醒。
+5. `src/schemas/lesson.schema.ts` 增强第 5 阶段事件类型、payload、时间、引用和唯一性校验。
+6. `lesson-01.json` 示例事件升级到第 5 阶段事件口径，并覆盖 `tip_show`、`warning_show`、`task_done`、`ability_unlock`、`summary_show`、`homework_show`。
+7. 中央 16:9 最终视频画框内不保留真实 `button/input/select/video[controls]` 控件，播放器控制仍在画框外。
+8. 新增 `docs/STAGE_5_TIMELINE_EDITOR_NOTES.md`。
+
+关键产物：
+1. `src/editor/timeline/VideoPreviewController.tsx`：编辑器外层视频 currentTime 同步控制器。
+2. `src/editor/TimelinePanel.tsx`：阶段与事件编辑主面板。
+3. `src/utils/eventRules.ts`：事件类型、目标模块和 payload 默认值规则。
+4. `src/utils/timeFormat.ts`：时间格式化、解析和 clamp 工具。
+5. `src/utils/timeline.ts`：编辑器和 Remotion 共享的 HUD runtime state 推导。
+6. `src/schemas/lesson.schema.ts`：第 5 阶段 schema 校验。
+7. `docs/STAGE_5_TIMELINE_EDITOR_NOTES.md`：第 5 阶段实现说明和交接文档。
+
+已冻结决策：
+1. 第 5 阶段采用附件事件名作为新建和示例配置口径，同时兼容读取旧规格事件名。
+2. 显示型事件 `tip_show`、`warning_show`、`summary_show`、`homework_show` 必须有 `endTime` 或 `duration`。
+3. `ability_unlock` 的能力解锁状态在 `startTime` 后持续生效，但底部短提示遵守自身 `endTime`。
+4. 旧的持久任务/地图事件不会压过后来阶段的默认联动；如果当前阶段内存在同类手动事件，则手动事件优先。
+5. 编辑器交互层不得进入 Remotion composition；最终视频仍不包含播放器控件。
+
+后续接手注意：
+1. 浏览器端仍不直接检查素材文件存在性，主视频占位路径会触发视频加载失败提示，但不阻断手动配置。
+2. `render:sample` 仍不足以覆盖后半段事件，需要后续补 Remotion still 或关键片段验收。
+3. `PropertyPanel.tsx` 仍偏大，第 6 阶段建议拆成更小的表单模块。
+4. 当前没有正式 test 脚本；本阶段通过 `tsx` 抽查关键时间点，后续应沉淀为自动化测试。
+5. Remotion `HudLayer` 仍是内联实现，后续收敛时只能复用无交互展示组件，不能引用编辑器选择层。
+
+下一阶段建议：
+1. 增加素材路径检查脚本和渲染前检查清单。
+2. 增加 lesson JSON 导入能力。
+3. 建立 `deriveHudState` 单元测试。
+4. 增加 Remotion still/片段验收脚本。
+5. 逐步收敛编辑器预览 HUD 与 Remotion HUD 展示组件。
+
+## 第 5 阶段审查成果记忆
+
+阶段目标：
+1. 审查第 5 阶段“时间轴编辑与联动预览 MVP”是否符合第 0-4 阶段产品、设计、架构和编辑器要求。
+2. 验证编辑器、schema、HUD runtime、Remotion composition 和最终视频无播放器控件边界。
+3. 判断是否允许进入第 6 阶段。
+
+已完成：
+1. 启动 Course HUD Director Agent，以事实边界、前端编辑器、数据模型、教学 HUD、证据验收等岗位并行审查。
+2. 阅读附件要求和第 0-5 阶段核心文档。
+3. 审查 `src/editor`、`src/utils`、`src/schemas`、`src/remotion`、`src/components/hud` 和 `lesson-01.json`。
+4. 运行 `npm run typecheck`、`npm run validate:lessons`、`npm run render:sample`、`npm run dev -- --port 5179`、`npm run studio -- --port 3011` 和 `npm run build`。
+5. 新增第 5 阶段正式审查报告，结论为有条件通过。
+
+关键产物：
+1. `docs/STAGE_5_TIMELINE_EDITOR_REVIEW.md`：第 5 阶段正式审查报告，包含评分、P0/P1/P2、命令结果、风险清单和第 6 阶段建议。
+
+已冻结决策：
+1. 第 5 阶段允许进入第 6 阶段，当前无 P0 阻断项。
+2. 最终 Remotion composition 未发现播放器控件，编辑器控件仍必须留在画框外或 editor-only 点选层内，不得进入 Remotion。
+3. 第 6 阶段不得扩大产品边界，应优先补素材检查、渲染前检查、JSON 导入、`deriveHudState` 自动化测试和关键时间点 Remotion 验收。
+4. `stage_change`、`targetComponent` 和 payload 同步字段语义需要在第 6 阶段优先冻结。
+
+后续接手注意：
+1. 重点 P1 包括 schema 交叉引用校验不足、`stage_change` 未驱动阶段状态、`targetComponent` runtime 归属不一致、preview duration fallback 不统一、右侧阶段时间编辑不排序。
+2. `render:sample` 通过但仍有占位素材 404，不能代表真实素材链路完成。
+3. 当前没有 `lint` / `test` 脚本，时间轴状态推导仍缺正式自动化测试。
+4. 文档中涉及“tsx 抽查关键时间点”的说法应在后续改为可复跑脚本或降级为临时抽查说明。
+
+下一阶段建议：
+1. 先补 `deriveHudState` 单元测试，再修 `stage_change`、`targetComponent` 和 payload 消费规则。
+2. 增加素材检查脚本和渲染前检查清单。
+3. 增加 lesson JSON 导入能力。
+4. 增加 Remotion still/片段验收脚本。
+5. 收敛编辑器和 Remotion 的无交互 HUD 展示组件。

@@ -1,65 +1,17 @@
-import type { CSSProperties } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import {
-  AbsoluteFill,
-  continueRender,
-  delayRender,
-  staticFile,
-  Video,
-} from "remotion";
+import { AbsoluteFill, continueRender, delayRender, Video } from "remotion";
 import type { MediaAssetLike } from "../CourseShellComposition";
+import { resolveRemotionPublicAssetSrc } from "../../utils/media";
+import { getMediaFitStyle } from "../../utils/mediaFit";
 
 type MainVideoLayerProps = {
   mainVideo?: MediaAssetLike;
   fitMode?: string;
+  muted?: boolean;
+  volume?: number;
 };
 
 type AssetStatus = "checking" | "available" | "missing";
-
-const resolveAssetSrc = (src?: string): string | null => {
-  if (!src || src.trim().length === 0) {
-    return null;
-  }
-
-  const normalized = src.trim().replace(/\\/g, "/");
-
-  if (/^(https?:|file:|data:|blob:)/i.test(normalized)) {
-    return normalized;
-  }
-
-  const publicIndex = normalized.indexOf("/public/");
-  if (publicIndex >= 0) {
-    return staticFile(normalized.slice(publicIndex + "/public/".length));
-  }
-
-  if (normalized.startsWith("public/")) {
-    return staticFile(normalized.slice("public/".length));
-  }
-
-  if (normalized.startsWith("/")) {
-    return normalized;
-  }
-
-  return staticFile(normalized.replace(/^\.?\//, ""));
-};
-
-const fitStyleFor = (fitMode?: string): CSSProperties => {
-  const normalized = (fitMode ?? "contain").replace("_", "-");
-
-  if (normalized === "cover") {
-    return { width: "100%", height: "100%", objectFit: "cover" };
-  }
-
-  if (normalized === "fit-width") {
-    return { width: "100%", height: "auto", objectFit: "contain" };
-  }
-
-  if (normalized === "fit-height") {
-    return { width: "auto", height: "100%", objectFit: "contain" };
-  }
-
-  return { width: "100%", height: "100%", objectFit: "contain" };
-};
 
 export const useAssetStatus = (src: string | null): AssetStatus => {
   const [status, setStatus] = useState<AssetStatus>(
@@ -151,11 +103,16 @@ const Placeholder = ({ label }: { label: string }) => {
 export const MainVideoLayer = ({
   mainVideo,
   fitMode = "contain",
+  muted = false,
+  volume = 1,
 }: MainVideoLayerProps) => {
   const [failed, setFailed] = useState(false);
-  const src = useMemo(() => resolveAssetSrc(mainVideo?.src), [mainVideo?.src]);
+  const src = useMemo(
+    () => resolveRemotionPublicAssetSrc(mainVideo?.src),
+    [mainVideo?.src],
+  );
   const assetStatus = useAssetStatus(src);
-  const videoStyle = fitStyleFor(fitMode);
+  const videoStyle = getMediaFitStyle(fitMode);
 
   return (
     <AbsoluteFill
@@ -184,6 +141,8 @@ export const MainVideoLayer = ({
         >
           <Video
             src={src}
+            muted={muted}
+            volume={muted ? 0 : volume}
             onError={() => setFailed(true)}
             style={videoStyle}
           />
@@ -203,4 +162,4 @@ export const MainVideoLayer = ({
   );
 };
 
-export const resolveRemotionAssetSrc = resolveAssetSrc;
+export const resolveRemotionAssetSrc = resolveRemotionPublicAssetSrc;

@@ -5,6 +5,21 @@ import { HudLayer } from "./layers/HudLayer";
 import { MainVideoLayer } from "./layers/MainVideoLayer";
 import { SpeakerLayer } from "./layers/SpeakerLayer";
 
+export type CourseShellAudioMode =
+  | "main-only"
+  | "speaker-only"
+  | "mix"
+  | "mute-all";
+
+export type CourseShellRenderSettings = {
+  fps?: number;
+  durationSeconds?: number;
+  audioMode?: CourseShellAudioMode;
+  mainVolume?: number;
+  speakerVolume?: number;
+  previewMode?: boolean;
+};
+
 export type MediaAssetLike = {
   id?: string;
   kind?: string;
@@ -50,6 +65,7 @@ export type LessonProjectConfigLike = {
   lecturer?: {
     name?: string;
     title?: string;
+    role?: string;
     displayMode?: "video" | "avatar" | "compact" | "hidden" | string;
     positionPreset?:
       | "bottom-left"
@@ -61,6 +77,8 @@ export type LessonProjectConfigLike = {
   speaker?: {
     name?: string;
     title?: string;
+    role?: string;
+    stats?: Array<{ label: string; value: string }>;
     useSpeakerVideo?: boolean;
     displayMode?: "video" | "avatar" | "compact" | "hidden" | string;
     positionPreset?:
@@ -68,6 +86,13 @@ export type LessonProjectConfigLike = {
       | "bottom-right"
       | "in-bottom-hud"
       | "hidden"
+      | string;
+    assetPriority?: Array<"video" | "avatar" | "identity_card" | "hidden" | string>;
+    missingAssetBehavior?:
+      | "block_render"
+      | "fallback_to_avatar"
+      | "fallback_to_identity_card"
+      | "hide"
       | string;
   };
   media?: {
@@ -87,6 +112,11 @@ export type LessonProjectConfigLike = {
       | "fit_width"
       | "fit_height"
       | string;
+    showTopHeader?: boolean;
+    showRightPanel?: boolean;
+    showBottomHud?: boolean;
+    showLecturerCard?: boolean;
+    showCourseStageBar?: boolean;
     topHeader?: { visible?: boolean; showCurrentStage?: boolean };
     rightSidebar?: { visible?: boolean; displayMode?: string };
     stageBar?: { visible?: boolean; displayMode?: string };
@@ -101,6 +131,7 @@ export type LessonProjectConfigLike = {
   };
   stages?: Array<{
     id: string;
+    label?: string;
     name: string;
     shortName?: string;
     startTime?: number;
@@ -110,6 +141,7 @@ export type LessonProjectConfigLike = {
   }>;
   tasks?: Array<{
     id: string;
+    label?: string;
     title: string;
     description?: string;
     stageId?: string;
@@ -170,20 +202,74 @@ export type LessonProjectConfigLike = {
     outputFileName?: string;
     outputDir?: string;
     durationSeconds?: number;
+    audioEnabled?: boolean;
   };
 };
 
 export type CourseShellCompositionProps = {
   lesson: LessonProjectConfig;
+  render?: CourseShellRenderSettings;
+  audioMode?: CourseShellAudioMode;
+};
+
+const audioModes = new Set<CourseShellAudioMode>([
+  "main-only",
+  "speaker-only",
+  "mix",
+  "mute-all",
+]);
+
+const toAudioMode = (value: unknown): CourseShellAudioMode | undefined => {
+  return typeof value === "string" && audioModes.has(value as CourseShellAudioMode)
+    ? (value as CourseShellAudioMode)
+    : undefined;
+};
+
+const getLessonAudioMode = (
+  lesson: LessonProjectConfig,
+): CourseShellAudioMode | undefined => {
+  return toAudioMode((lesson as unknown as { audio?: { mode?: unknown } }).audio?.mode);
+};
+
+const resolveAudioMode = ({
+  audioMode,
+  lesson,
+  render,
+}: CourseShellCompositionProps): CourseShellAudioMode => {
+  const explicitMode =
+    toAudioMode(audioMode) ?? toAudioMode(render?.audioMode) ?? getLessonAudioMode(lesson);
+
+  if (explicitMode) {
+    return explicitMode;
+  }
+
+  return lesson.render.audioEnabled === false ? "mute-all" : "main-only";
+};
+
+const clampVolume = (value: unknown, fallback: number): number => {
+  return typeof value === "number" && Number.isFinite(value)
+    ? Math.min(1, Math.max(0, value))
+    : fallback;
 };
 
 export const CourseShellComposition = ({
+  audioMode,
   lesson,
+  render,
 }: CourseShellCompositionProps) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const currentTime = frame / fps;
   const hudState = deriveHudState(lesson, currentTime);
+  const resolvedAudioMode = resolveAudioMode({ audioMode, lesson, render });
+  const mainVideoMuted =
+    resolvedAudioMode === "speaker-only" || resolvedAudioMode === "mute-all";
+  const speakerMuted =
+    resolvedAudioMode === "main-only" || resolvedAudioMode === "mute-all";
+  const forceSpeakerVideo =
+    resolvedAudioMode === "speaker-only" || resolvedAudioMode === "mix";
+  const mainVideoFitMode =
+    lesson.layout?.mainVideoFitMode ?? lesson.media?.mainVideoFitMode ?? "contain";
 
   return (
     <AbsoluteFill
@@ -197,12 +283,22 @@ export const CourseShellComposition = ({
       }}
     >
       <MainVideoLayer
-        fitMode={lesson.layout?.mainVideoFitMode ?? "contain"}
+        fitMode={mainVideoFitMode}
         mainVideo={lesson.media?.mainVideo}
+        muted={mainVideoMuted}
+        volume={clampVolume(render?.mainVolume, 1)}
       />
       <SpeakerLayer
+        forceSpeakerVideo={forceSpeakerVideo}
+        muted={speakerMuted}
+        volume={clampVolume(render?.speakerVolume, 1)}
         media={lesson.media}
+        positionPreset={lesson.layout?.lecturer?.positionPreset}
         speaker={lesson.speaker}
+        visible={
+          lesson.layout?.lecturer?.visible !== false &&
+          lesson.layout?.showLecturerCard !== false
+        }
       />
       <HudLayer lesson={lesson} hudState={hudState} currentTime={currentTime} />
     </AbsoluteFill>

@@ -78,9 +78,23 @@
     "mainVideoFitMode": "contain",
     "hudAssets": []
   },
+  "audio": {
+    "mode": "main-only"
+  },
   "speaker": {
     "name": "Course Operator",
     "title": "Solo creator workflow coach",
+    "role": "Solo creator workflow coach",
+    "stats": [
+      {
+        "label": "Mode",
+        "value": "Guided"
+      },
+      {
+        "label": "Signal",
+        "value": "Stable"
+      }
+    ],
     "bio": "Used only for editor context in this sample.",
     "displayMode": "video",
     "positionPreset": "bottom-left",
@@ -279,11 +293,12 @@
     },
     {
       "id": "event-map-filter",
-      "type": "map_node_activate",
+      "type": "map_node_active",
       "startTime": 118,
       "targetComponent": "chapter_map",
       "payload": {
-        "mapNodeId": "node-filter",
+        "nodeId": "node-filter",
+        "label": "Filter",
         "state": "current",
         "completePrevious": true
       },
@@ -296,11 +311,12 @@
     },
     {
       "id": "event-task-filter",
-      "type": "task_update",
+      "type": "task_active",
       "startTime": 124,
       "targetComponent": "task_tracker",
       "payload": {
         "taskId": "task-filter",
+        "label": "Filter by lesson value",
         "state": "current",
         "autoCompletePrevious": true
       },
@@ -308,16 +324,35 @@
       "enabled": true
     },
     {
+      "id": "event-tip-orient",
+      "type": "tip_show",
+      "startTime": 36,
+      "endTime": 44,
+      "targetComponent": "warning_panel",
+      "payload": {
+        "title": "Source first",
+        "text": "Collect evidence before choosing a teaching angle.",
+        "level": "info"
+      },
+      "animation": {
+        "enter": "fade_up",
+        "exit": "fade",
+        "durationMs": 220
+      },
+      "priority": 82,
+      "enabled": true
+    },
+    {
       "id": "event-warning-filter",
-      "type": "hint_show",
+      "type": "warning_show",
       "startTime": 150,
       "endTime": 160,
       "targetComponent": "warning_panel",
       "payload": {
         "hintId": "hint-filter-warning",
-        "hintType": "warning",
         "title": "Avoid source drift",
-        "body": "Separate proof from inspiration before you script.",
+        "text": "Separate proof from inspiration before you script.",
+        "level": "warning",
         "syncBottomStatus": true
       },
       "animation": {
@@ -345,16 +380,29 @@
       "label": "Enter package stage"
     },
     {
+      "id": "event-task-filter-done",
+      "type": "task_done",
+      "startTime": 246,
+      "targetComponent": "task_tracker",
+      "payload": {
+        "taskId": "task-filter",
+        "label": "Filter by lesson value",
+        "state": "completed"
+      },
+      "priority": 76,
+      "enabled": true
+    },
+    {
       "id": "event-skill-packet",
-      "type": "skill_unlock",
+      "type": "ability_unlock",
       "startTime": 270,
       "endTime": 276,
       "targetComponent": "bottom_status_hud",
       "payload": {
-        "skillId": "skill-source-packet",
-        "title": "Skill unlocked: Source packet",
-        "body": "You can now package raw references for scripting.",
-        "mapNodeId": "node-package",
+        "abilityId": "skill-source-packet",
+        "label": "Source packet",
+        "description": "You can now package raw references for scripting.",
+        "nodeId": "node-package",
         "syncMapNode": true
       },
       "animation": {
@@ -367,14 +415,15 @@
     },
     {
       "id": "event-summary-package",
-      "type": "stage_summary",
+      "type": "summary_show",
       "startTime": 316,
       "endTime": 326,
       "targetComponent": "warning_panel",
       "payload": {
         "stageId": "stage-package",
         "title": "Mission complete",
-        "body": "Your next lesson now has a filtered source packet.",
+        "text": "Your next lesson now has a filtered source packet.",
+        "bullets": ["Filtered sources", "One next action"],
         "markStageCompleted": true,
         "syncBottomStatus": true
       },
@@ -383,14 +432,15 @@
     },
     {
       "id": "event-homework",
-      "type": "homework_reminder",
+      "type": "homework_show",
       "startTime": 340,
       "endTime": 354,
       "targetComponent": "warning_panel",
       "payload": {
         "title": "After class",
-        "body": "Build one source packet for your own next course video.",
+        "text": "Build one source packet for your own next course video.",
         "actionLabel": "Prepare one packet",
+        "checklist": ["Pick one topic", "Collect three sources", "Write one next action"],
         "taskId": "task-package",
         "syncTaskTracker": true,
         "syncBottomStatus": true
@@ -404,8 +454,11 @@
     "height": 1080,
     "fps": 30,
     "format": "mp4",
-    "outputName": "lesson-01-hud.mp4",
-    "outputDir": "out/renders",
+    "outputName": "lesson-01-final.mp4",
+    "outputDir": "out",
+    "durationMode": "auto",
+    "durationSeconds": 360,
+    "codec": "h264",
     "videoCodec": "h264",
     "audioEnabled": true,
     "quality": "standard"

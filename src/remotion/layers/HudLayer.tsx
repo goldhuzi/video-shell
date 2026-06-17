@@ -12,6 +12,14 @@ type HudRuntimeStateLike = {
     hintType?: string;
     title?: string;
     body?: string;
+    sourceEventId?: string;
+  };
+  activeWarning?: {
+    id?: string;
+    hintType?: string;
+    title?: string;
+    body?: string;
+    sourceEventId?: string;
   };
   activeBottomStatus?: {
     title?: string;
@@ -19,8 +27,34 @@ type HudRuntimeStateLike = {
     message?: string;
     body?: string;
     kind?: string;
+    sourceEventId?: string;
   };
+  activeSummary?: {
+    id?: string;
+    hintType?: string;
+    title?: string;
+    body?: string;
+    sourceEventId?: string;
+  };
+  activeHomework?: {
+    id?: string;
+    hintType?: string;
+    title?: string;
+    body?: string;
+    sourceEventId?: string;
+  };
+  activeEvents?: Array<{
+    id: string;
+    type?: string;
+    payload?: Record<string, unknown>;
+  }>;
   activeSkillIds?: string[];
+  unlockedAbilities?: Array<{
+    id: string;
+    label: string;
+    description?: string;
+    sourceEventId: string;
+  }>;
 };
 
 type HudLayerProps = {
@@ -69,6 +103,91 @@ const stateColor = (state?: string) => {
   return "rgba(190, 211, 229, 0.62)";
 };
 
+const getPositionStyle = (positionPreset?: string) => {
+  if (positionPreset === "bottom-right") {
+    return { left: 1152, top: 940 };
+  }
+
+  if (positionPreset === "in-bottom-hud") {
+    return { left: 304, top: 940 };
+  }
+
+  return { left: 24, top: 940 };
+};
+
+const asStringList = (value: unknown): string[] => {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .filter((item): item is string => typeof item === "string")
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .slice(0, 3);
+};
+
+const findSourceEvent = (
+  hudState: HudRuntimeStateLike,
+  sourceEventId?: string,
+) => {
+  return sourceEventId
+    ? hudState.activeEvents?.find((event) => event.id === sourceEventId)
+    : undefined;
+};
+
+const getNoticeLines = (
+  hudState: HudRuntimeStateLike,
+  sourceEventId?: string,
+): string[] => {
+  const payload = findSourceEvent(hudState, sourceEventId)?.payload;
+  return [
+    ...asStringList(payload?.bullets),
+    ...asStringList(payload?.checklist),
+  ].slice(0, 3);
+};
+
+const getNoticeLabel = (hintType?: string) => {
+  if (hintType === "summary") {
+    return "SUMMARY";
+  }
+
+  if (hintType === "homework") {
+    return "HOMEWORK";
+  }
+
+  if (hintType === "warning") {
+    return "WARNING";
+  }
+
+  if (hintType === "beginner_tip") {
+    return "BEGINNER TIP";
+  }
+
+  return "NOTICE";
+};
+
+const getBottomStatusLabel = (
+  hudState: HudRuntimeStateLike,
+  sourceEventId?: string,
+) => {
+  const eventType = findSourceEvent(hudState, sourceEventId)?.type;
+
+  if (eventType === "ability_unlock" || eventType === "skill_unlock") {
+    return "ABILITY UNLOCKED";
+  }
+
+  if (eventType === "summary_show" || eventType === "stage_summary") {
+    return "STAGE SUMMARY";
+  }
+
+  if (eventType === "homework_show" || eventType === "homework_reminder") {
+    return "HOMEWORK READY";
+  }
+
+  return "BOTTOM STATUS HUD";
+};
+
 const TopHeader = ({
   lesson,
   currentStageName,
@@ -82,7 +201,7 @@ const TopHeader = ({
       ? `${course.lessonIndex}/${course.totalLessons}`
       : course?.lessonNumber;
 
-  if (lesson.layout?.topHeader?.visible === false) {
+  if (lesson.layout?.topHeader?.visible === false || lesson.layout?.showTopHeader === false) {
     return null;
   }
 
@@ -165,6 +284,7 @@ const TopHeader = ({
 const LecturerMiniCard = ({ lesson }: { lesson: LessonProjectConfigLike }) => {
   if (
     lesson.layout?.lecturer?.visible === false ||
+    lesson.layout?.showLecturerCard === false ||
     lesson.speaker?.displayMode === "hidden" ||
     lesson.lecturer?.displayMode === "hidden" ||
     lesson.speaker?.positionPreset === "hidden" ||
@@ -173,12 +293,17 @@ const LecturerMiniCard = ({ lesson }: { lesson: LessonProjectConfigLike }) => {
     return null;
   }
 
+  const positionStyle = getPositionStyle(
+    lesson.layout?.lecturer?.positionPreset ??
+      lesson.speaker?.positionPreset ??
+      lesson.lecturer?.positionPreset,
+  );
+
   return (
     <div
       style={{
         position: "absolute",
-        left: 24,
-        top: 940,
+        ...positionStyle,
         width: 260,
         height: 112,
         pointerEvents: "none",
@@ -201,7 +326,7 @@ const LecturerMiniCard = ({ lesson }: { lesson: LessonProjectConfigLike }) => {
       >
         {lesson.lecturer?.name ?? lesson.speaker?.name ?? "LECTURER"}
         <span style={{ marginLeft: 8, color: "rgba(170, 217, 245, 0.78)" }}>
-          {lesson.lecturer?.title ?? lesson.speaker?.title ?? "ON AIR"}
+          {lesson.lecturer?.role ?? lesson.lecturer?.title ?? lesson.speaker?.role ?? lesson.speaker?.title ?? "ON AIR"}
         </span>
       </div>
     </div>
@@ -217,6 +342,8 @@ const ChapterMap = ({
 }) => {
   if (
     lesson.layout?.rightSidebar?.visible === false ||
+    lesson.layout?.showRightPanel === false ||
+    lesson.layout?.rightSidebar?.displayMode === "hidden" ||
     lesson.layout?.rightSidebar?.displayMode === "tasks_only" ||
     lesson.layout?.rightSidebar?.displayMode === "hints_only"
   ) {
@@ -296,6 +423,8 @@ const TaskTracker = ({
 }) => {
   if (
     lesson.layout?.rightSidebar?.visible === false ||
+    lesson.layout?.showRightPanel === false ||
+    lesson.layout?.rightSidebar?.displayMode === "hidden" ||
     lesson.layout?.rightSidebar?.displayMode === "map_only" ||
     lesson.layout?.rightSidebar?.displayMode === "hints_only"
   ) {
@@ -351,7 +480,7 @@ const TaskTracker = ({
                   textOverflow: "ellipsis",
                 }}
               >
-                {task.title}
+                {task.label ?? task.title}
               </div>
             </div>
           );
@@ -370,6 +499,8 @@ const WarningPanel = ({
 }) => {
   if (
     lesson.layout?.rightSidebar?.visible === false ||
+    lesson.layout?.showRightPanel === false ||
+    lesson.layout?.rightSidebar?.displayMode === "hidden" ||
     lesson.layout?.rightSidebar?.displayMode === "map_only" ||
     lesson.layout?.rightSidebar?.displayMode === "tasks_only"
   ) {
@@ -377,7 +508,15 @@ const WarningPanel = ({
   }
 
   const hint =
-    hudState.activeHint ?? lesson.warning?.items?.[0] ?? lesson.hints?.[0];
+    hudState.activeHomework ??
+    hudState.activeSummary ??
+    hudState.activeWarning ??
+    hudState.activeHint ??
+    lesson.warning?.items?.[0] ??
+    lesson.hints?.[0];
+  const sourceEventId =
+    hint && "sourceEventId" in hint ? hint.sourceEventId : undefined;
+  const noticeLines = getNoticeLines(hudState, sourceEventId);
 
   return (
     <div
@@ -394,8 +533,8 @@ const WarningPanel = ({
             ? "rgba(255, 183, 77, 0.52)"
             : "rgba(114, 207, 255, 0.28)",
       }}
-    >
-      <div style={labelStyle}>WARNING PANEL</div>
+      >
+      <div style={labelStyle}>{getNoticeLabel(hint?.hintType)}</div>
       <div
         style={{
           marginTop: 22,
@@ -417,6 +556,40 @@ const WarningPanel = ({
       >
         {hint?.body ?? "当前没有命中的重点提示事件。"}
       </div>
+      {noticeLines.length > 0 ? (
+        <div
+          style={{
+            marginTop: 14,
+            display: "grid",
+            gap: 7,
+          }}
+        >
+          {noticeLines.map((line) => (
+            <div
+              key={line}
+              style={{
+                display: "grid",
+                gridTemplateColumns: "12px 1fr",
+                gap: 8,
+                alignItems: "center",
+                color: "rgba(214, 240, 255, 0.82)",
+                fontSize: 14,
+                lineHeight: 1.25,
+              }}
+            >
+              <span
+                style={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: 6,
+                  background: "rgba(125, 229, 255, 0.86)",
+                }}
+              />
+              <span>{line}</span>
+            </div>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 };
@@ -428,7 +601,11 @@ const CourseStageBar = ({
   lesson: LessonProjectConfigLike;
   hudState: HudRuntimeStateLike;
 }) => {
-  if (lesson.layout?.stageBar?.visible === false) {
+  if (
+    lesson.layout?.stageBar?.visible === false ||
+    lesson.layout?.showCourseStageBar === false ||
+    lesson.layout?.stageBar?.displayMode === "hidden"
+  ) {
     return null;
   }
 
@@ -494,7 +671,7 @@ const CourseStageBar = ({
                 textOverflow: "ellipsis",
               }}
             >
-              {stage.shortName ?? stage.name}
+              {stage.shortName ?? stage.label ?? stage.name}
             </div>
           </div>
         );
@@ -512,11 +689,13 @@ const BottomStatusHud = ({
   hudState: HudRuntimeStateLike;
   currentTime: number;
 }) => {
-  if (lesson.layout?.bottomStatusHud?.visible === false) {
+  if (lesson.layout?.bottomStatusHud?.visible === false || lesson.layout?.showBottomHud === false) {
     return null;
   }
 
   const status = hudState.activeBottomStatus;
+  const latestAbility = hudState.unlockedAbilities?.at(-1);
+  const statusLabel = getBottomStatusLabel(hudState, status?.sourceEventId);
 
   return (
     <div
@@ -530,7 +709,7 @@ const BottomStatusHud = ({
         padding: 18,
       }}
     >
-      <div style={labelStyle}>BOTTOM STATUS HUD</div>
+      <div style={labelStyle}>{statusLabel}</div>
       <div
         style={{
           marginTop: 13,
@@ -541,6 +720,7 @@ const BottomStatusHud = ({
         }}
       >
         {status?.title ??
+          latestAbility?.label ??
           status?.label ??
           getCourseMeta(lesson)?.mainMission ??
           "课程任务待命"}
@@ -554,7 +734,8 @@ const BottomStatusHud = ({
       >
         {status?.message ??
           status?.body ??
-          `HUD time ${currentTime.toFixed(1)}s`}
+          latestAbility?.description ??
+          (currentTime >= 0 ? "等待下一个课程状态事件" : "课程状态待命")}
       </div>
     </div>
   );

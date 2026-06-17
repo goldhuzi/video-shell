@@ -1,6 +1,11 @@
 import { Composition, registerRoot } from "remotion";
+import type { CalculateMetadataFunction } from "remotion";
 import type { LessonProjectConfig } from "../schemas/lesson.schema";
-import { CourseShellComposition } from "./CourseShellComposition";
+import {
+  CourseShellComposition,
+  type CourseShellCompositionProps,
+  type CourseShellRenderSettings,
+} from "./CourseShellComposition";
 
 const WIDTH = 1920;
 const HEIGHT = 1080;
@@ -28,6 +33,10 @@ const defaultLesson = {
   speaker: {
     name: "Course Mentor",
     title: "Instructor",
+    role: "Instructor",
+    stats: [
+      { label: "Mode", value: "Preview" },
+    ],
     displayMode: "compact",
     positionPreset: "bottom-left",
   },
@@ -55,6 +64,7 @@ const defaultLesson = {
   stages: [
     {
       id: "stage-brief",
+      label: "任务导入",
       name: "任务导入",
       shortName: "导入",
       startTime: 0,
@@ -64,6 +74,7 @@ const defaultLesson = {
     },
     {
       id: "stage-build",
+      label: "关键操作",
       name: "关键操作",
       shortName: "操作",
       startTime: 20,
@@ -73,6 +84,7 @@ const defaultLesson = {
     },
     {
       id: "stage-review",
+      label: "复盘交付",
       name: "复盘交付",
       shortName: "复盘",
       startTime: 45,
@@ -82,9 +94,9 @@ const defaultLesson = {
     },
   ],
   tasks: [
-    { id: "task-1", title: "确认课程目标", stageId: "stage-brief", order: 1 },
-    { id: "task-2", title: "跟随主线完成配置", stageId: "stage-build", order: 2 },
-    { id: "task-3", title: "记录交付检查点", stageId: "stage-review", order: 3 },
+    { id: "task-1", label: "确认课程目标", title: "确认课程目标", stageId: "stage-brief", order: 1 },
+    { id: "task-2", label: "跟随主线完成配置", title: "跟随主线完成配置", stageId: "stage-build", order: 2 },
+    { id: "task-3", label: "记录交付检查点", title: "记录交付检查点", stageId: "stage-review", order: 3 },
   ],
   chapterMap: {
     displayMode: "vertical_route",
@@ -112,22 +124,82 @@ const defaultLesson = {
     height: HEIGHT,
     fps: DEFAULT_FPS,
     format: "mp4",
-    outputName: "lesson-01-sample.mp4",
+    outputName: "course-shell-preview.mp4",
     outputDir: "out",
     audioEnabled: true,
     quality: "preview",
   },
 } satisfies LessonProjectConfig;
 
-const durationFromLesson = (lesson: LessonProjectConfig): number => {
-  const renderDuration = Number(
-    (lesson.render as { durationSeconds?: unknown }).durationSeconds,
+const positiveNumber = (value: unknown): number | undefined => {
+  return typeof value === "number" && Number.isFinite(value) && value > 0
+    ? value
+    : undefined;
+};
+
+const fpsFromProps = ({
+  lesson,
+  render,
+}: CourseShellCompositionProps): number => {
+  return (
+    positiveNumber(render?.fps) ??
+    positiveNumber(lesson.render.fps) ??
+    positiveNumber(lesson.meta.canvas.fps) ??
+    DEFAULT_FPS
   );
-  if (Number.isFinite(renderDuration) && renderDuration > 0) {
-    return renderDuration;
+};
+
+const durationFromProps = ({
+  lesson,
+  render,
+}: CourseShellCompositionProps): number => {
+  const explicitDuration = positiveNumber(render?.durationSeconds);
+  if (explicitDuration) {
+    return explicitDuration;
   }
 
-  return DEFAULT_DURATION_SECONDS;
+  const lessonRenderDuration = Number(
+    (lesson.render as { durationSeconds?: unknown }).durationSeconds,
+  );
+  if (Number.isFinite(lessonRenderDuration) && lessonRenderDuration > 0) {
+    return lessonRenderDuration;
+  }
+
+  const mainVideoDuration = positiveNumber(lesson.media.mainVideo.duration);
+  if (mainVideoDuration) {
+    return mainVideoDuration;
+  }
+
+  const lastStageTime = Math.max(
+    0,
+    ...lesson.stages.map((stage) => stage.endTime ?? stage.startTime),
+  );
+  return lastStageTime > 0 ? lastStageTime : DEFAULT_DURATION_SECONDS;
+};
+
+const defaultRender: CourseShellRenderSettings = {
+  previewMode: true,
+};
+
+const calculateMetadata: CalculateMetadataFunction<CourseShellCompositionProps> = ({
+  props,
+}) => {
+  const compositionProps = {
+    lesson: props.lesson ?? defaultLesson,
+    render: props.render ?? defaultRender,
+    audioMode: props.audioMode,
+  } satisfies CourseShellCompositionProps;
+  const fps = fpsFromProps(compositionProps);
+
+  return {
+    fps,
+    width: WIDTH,
+    height: HEIGHT,
+    durationInFrames: Math.max(
+      1,
+      Math.ceil(durationFromProps(compositionProps) * fps),
+    ),
+  };
 };
 
 export const RemotionRoot = () => {
@@ -139,24 +211,10 @@ export const RemotionRoot = () => {
       height={HEIGHT}
       fps={DEFAULT_FPS}
       durationInFrames={DEFAULT_DURATION_SECONDS * DEFAULT_FPS}
-      defaultProps={{ lesson: defaultLesson }}
-      calculateMetadata={({ props }) => {
-        const lesson = (props.lesson ?? defaultLesson) as LessonProjectConfig;
-        const fps =
-          lesson.render.fps === 60 || lesson.render.fps === 30
-            ? lesson.render.fps
-            : DEFAULT_FPS;
-
-        return {
-          fps,
-          width: WIDTH,
-          height: HEIGHT,
-          durationInFrames: Math.max(
-            1,
-            Math.ceil(durationFromLesson(lesson) * fps),
-          ),
-        };
-      }}
+      defaultProps={
+        { lesson: defaultLesson, render: defaultRender } satisfies CourseShellCompositionProps
+      }
+      calculateMetadata={calculateMetadata}
     />
   );
 };

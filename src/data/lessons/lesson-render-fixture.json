@@ -1,0 +1,211 @@
+{
+  "schemaVersion": "1.0.0",
+  "meta": {
+    "projectId": "lesson-render-fixture",
+    "projectName": "Stage 6 Render Fixture",
+    "courseTitle": "视频课程套壳渲染验收",
+    "lessonTitle": "本地单节课渲染小样",
+    "chapterTitle": "Renderer Verification",
+    "lessonNumber": "Fixture 01",
+    "lessonIndex": 1,
+    "totalLessons": 1,
+    "courseCode": "HUD-FIXTURE",
+    "statusLabel": "VERIFY",
+    "mainMission": "验证 preflight、smoke、still、clip 和正式渲染链路",
+    "description": "用于第 6 阶段审查整改的本地安全小样配置。",
+    "canvas": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30
+    }
+  },
+  "media": {
+    "mainVideo": {
+      "id": "fixture-main-video",
+      "kind": "main_video",
+      "label": "Synthetic main video",
+      "src": "/input/videos/stage6-review-main.mp4",
+      "duration": 12,
+      "width": 1280,
+      "height": 720,
+      "mimeType": "video/mp4",
+      "required": true
+    },
+    "speakerVideo": {
+      "id": "fixture-speaker-video",
+      "kind": "lecturer_video",
+      "label": "Synthetic speaker video",
+      "src": "/input/speakers/stage6-review-speaker.mp4",
+      "duration": 12,
+      "width": 320,
+      "height": 180,
+      "mimeType": "video/mp4",
+      "required": false
+    },
+    "speakerImage": {
+      "id": "fixture-speaker-avatar",
+      "kind": "avatar",
+      "label": "Synthetic avatar",
+      "src": "/input/images/stage6-review-avatar.png",
+      "width": 512,
+      "height": 512,
+      "mimeType": "image/png",
+      "required": false
+    },
+    "useSpeakerVideo": true,
+    "mainVideoFitMode": "contain",
+    "hudAssets": []
+  },
+  "audio": {
+    "mode": "main-only"
+  },
+  "speaker": {
+    "name": "Fixture Mentor",
+    "title": "Renderer QA",
+    "role": "Verification Guide",
+    "stats": [
+      {
+        "label": "Mode",
+        "value": "Local"
+      },
+      {
+        "label": "Phase",
+        "value": "Stage 6"
+      }
+    ],
+    "displayMode": "video",
+    "positionPreset": "bottom-left",
+    "assetPriority": ["video", "avatar", "identity_card", "hidden"],
+    "missingAssetBehavior": "fallback_to_avatar"
+  },
+  "layout": {
+    "aspectRatio": "16:9",
+    "showTopHeader": true,
+    "showRightPanel": true,
+    "showBottomHud": true,
+    "showLecturerCard": true,
+    "showCourseStageBar": true,
+    "canvas": {
+      "width": 1920,
+      "height": 1080
+    },
+    "mainVideoFitMode": "contain",
+    "mainVideoSafeArea": {
+      "showGuideInEditor": true,
+      "protectedRegions": ["top", "right", "bottom"],
+      "notes": "Fixture uses a generated test pattern, not user material."
+    },
+    "topHeader": {
+      "visible": true,
+      "showCurrentStage": true
+    },
+    "rightSidebar": {
+      "visible": true,
+      "displayMode": "full"
+    },
+    "stageBar": {
+      "visible": true,
+      "displayMode": "standard"
+    },
+    "lecturer": {
+      "visible": true,
+      "positionPreset": "bottom-left"
+    },
+    "bottomStatusHud": {
+      "visible": true
+    }
+  },
+  "warning": {
+    "defaultHintId": "hint-fixture-default",
+    "items": [
+      {
+        "id": "hint-fixture-default",
+        "hintType": "key_point",
+        "title": "本地验收小样",
+        "body": "该配置用于验证第 6 阶段渲染链路，不包含真实课程素材。",
+        "stageId": "stage-fixture"
+      }
+    ]
+  },
+  "tasks": [
+    {
+      "id": "task-fixture",
+      "label": "完成渲染链路检查",
+      "title": "完成渲染链路检查",
+      "description": "验证 preflight、smoke、still、clip 与正式渲染。",
+      "stageId": "stage-fixture",
+      "order": 1,
+      "defaultStatus": "current"
+    }
+  ],
+  "chapterMap": {
+    "displayMode": "vertical_route",
+    "nodes": [
+      {
+        "id": "node-fixture",
+        "label": "Renderer",
+        "stageId": "stage-fixture",
+        "skillId": "skill-renderer",
+        "order": 1,
+        "defaultStatus": "current"
+      }
+    ]
+  },
+  "stages": [
+    {
+      "id": "stage-fixture",
+      "label": "渲染验收",
+      "name": "渲染验收",
+      "shortName": "验收",
+      "startTime": 0,
+      "endTime": 12,
+      "mapNodeId": "node-fixture",
+      "defaultTaskId": "task-fixture",
+      "defaultHintId": "hint-fixture-default",
+      "order": 1,
+      "enabled": true
+    }
+  ],
+  "timelineEvents": [
+    {
+      "id": "event-fixture-tip",
+      "type": "tip_show",
+      "startTime": 2,
+      "endTime": 6,
+      "targetComponent": "warning_panel",
+      "payload": {
+        "title": "关键帧检查",
+        "text": "该提示应在 2-6 秒显示，可用于 still/clip 验收。",
+        "syncBottomStatus": true
+      },
+      "priority": 10,
+      "enabled": true
+    },
+    {
+      "id": "event-fixture-skill",
+      "type": "ability_unlock",
+      "startTime": 7,
+      "targetComponent": "bottom_status_hud",
+      "payload": {
+        "abilityId": "skill-renderer",
+        "label": "Renderer path verified",
+        "description": "本地渲染链路已进入可验收状态。"
+      },
+      "priority": 6,
+      "enabled": true
+    }
+  ],
+  "render": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "format": "mp4",
+    "outputName": "lesson-render-fixture-final.mp4",
+    "outputDir": "out",
+    "durationMode": "fixed",
+    "durationSeconds": 12,
+    "codec": "h264",
+    "audioEnabled": true,
+    "quality": "preview"
+  }
+}

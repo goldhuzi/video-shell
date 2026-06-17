@@ -7,6 +7,14 @@
     "dev": "vite --host 127.0.0.1",
     "studio": "remotion studio src/remotion/Root.tsx",
     "render:sample": "tsx scripts/render-sample.ts",
+    "preflight:render": "tsx scripts/preflight-render.ts",
+    "render:lesson": "tsx scripts/render-lesson.ts",
+    "render:smoke": "tsx scripts/render-smoke.ts",
+    "render:still": "tsx scripts/render-still.ts",
+    "render:clip": "tsx scripts/render-clip.ts",
+    "test": "npm run validate:lessons && npm run test:hud && npm run test:preflight",
+    "test:hud": "tsx scripts/test-hud-state.ts",
+    "test:preflight": "tsx scripts/test-preflight-render.ts",
     "validate:lessons": "tsx scripts/validate-lessons.ts",
     "typecheck": "tsc --noEmit",
     "build": "vite build"
@@ -14,6 +22,7 @@
   "dependencies": {
     "@remotion/bundler": "4.0.477",
     "@remotion/cli": "4.0.477",
+    "@remotion/media-parser": "4.0.477",
     "@remotion/media-utils": "4.0.477",
     "@remotion/renderer": "4.0.477",
     "@vitejs/plugin-react": "^5.0.0",
