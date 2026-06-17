@@ -277,34 +277,34 @@
   top: 1.5%;
   left: 1.5%;
   right: 1.5%;
-  height: 7%;
+  height: 5.4%;
 }
 
 .main-video-slot {
-  top: 10.2%;
-  left: 1.5%;
-  width: 73%;
-  height: 72.5%;
+  top: 7.96%;
+  left: 1.25%;
+  width: 80.6%;
+  height: 79.1%;
 }
 
 .right-hud-stack {
-  top: 10.2%;
-  right: 1.5%;
-  bottom: 17.3%;
-  width: 22.5%;
+  top: 7.96%;
+  right: 1.25%;
+  bottom: 12.96%;
+  width: 16.25%;
   display: grid;
-  grid-template-rows: 1.12fr 1fr 0.95fr;
+  grid-template-rows: 1.08fr 0.98fr 1.18fr;
   gap: 1.6%;
 }
 
 .bottom-hud-row {
-  left: 1.5%;
-  right: 1.5%;
-  bottom: 1.5%;
-  height: 14%;
+  left: 1.25%;
+  right: 1.25%;
+  bottom: 2.2%;
+  height: 9.63%;
   display: grid;
-  grid-template-columns: 18% minmax(0, 1fr) 21%;
-  gap: 1%;
+  grid-template-columns: 13.25% minmax(0, 1fr) 16.67%;
+  gap: 0.65%;
 }
 
 .hud-select-target {
@@ -345,7 +345,7 @@
   border: 1px solid rgba(170, 190, 255, 0.22);
   border-radius: var(--radius-panel);
   background: var(--bg-video-matte);
-  padding: 10px;
+  padding: 6px;
 }
 
 .main-video-placeholder {

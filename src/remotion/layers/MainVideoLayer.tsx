@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AbsoluteFill, continueRender, delayRender, Video } from "remotion";
+import { continueRender, delayRender, Video } from "remotion";
 import type { MediaAssetLike } from "../CourseShellComposition";
 import { resolveRemotionPublicAssetSrc } from "../../utils/media";
 import { getMediaFitStyle } from "../../utils/mediaFit";
@@ -74,27 +74,10 @@ export const useAssetStatus = (src: string | null): AssetStatus => {
 
 const Placeholder = ({ label }: { label: string }) => {
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background:
-          "linear-gradient(135deg, rgba(21, 36, 55, 0.95), rgba(6, 10, 18, 0.96))",
-        color: "rgba(227, 244, 255, 0.82)",
-        fontSize: 34,
-        fontWeight: 700,
-        letterSpacing: 0,
-        textAlign: "center",
-      }}
-    >
+    <div className="render-main-video-placeholder">
       <div>
-        <div style={{ fontSize: 18, color: "rgba(125, 219, 255, 0.82)" }}>
-          MAIN VIDEO SOURCE
-        </div>
-        <div style={{ marginTop: 12 }}>{label}</div>
+        <span>MAIN VIDEO SOURCE</span>
+        <strong>{label}</strong>
       </div>
     </div>
   );
@@ -115,30 +98,9 @@ export const MainVideoLayer = ({
   const videoStyle = getMediaFitStyle(fitMode);
 
   return (
-    <AbsoluteFill
-      style={{
-        left: 24,
-        top: 92,
-        width: 1392,
-        height: 780,
-        border: "1px solid rgba(116, 205, 255, 0.36)",
-        boxShadow:
-          "0 0 0 1px rgba(255,255,255,0.05) inset, 0 18px 60px rgba(0,0,0,0.38)",
-        overflow: "hidden",
-        background: "#050910",
-      }}
-    >
+    <div className="render-main-video-frame">
       {src && assetStatus === "available" && !failed ? (
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            background: "#02050a",
-          }}
-        >
+        <div className="render-main-video-content">
           <Video
             src={src}
             muted={muted}
@@ -158,7 +120,7 @@ export const MainVideoLayer = ({
           }
         />
       )}
-    </AbsoluteFill>
+    </div>
   );
 };
 

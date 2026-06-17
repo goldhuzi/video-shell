@@ -63,11 +63,14 @@ README.md 负责面向人和新 Agent 的项目入口；AGENTS.MD 负责长期�
 7. 第 5 阶段审查：时间轴编辑与联动预览审查，有条件通过。
 8. 第 6 阶段：本地单节课渲染链路。
 9. 第 6 阶段审查：本地单节课渲染链路审查，有条件通过。
-10. Agent 协作设计：Course HUD Director Agent 总指挥工作流。
+10. 第 7 阶段：HUD 视觉精修与默认模板定稿。
+11. 第 8 阶段：用户真实授权素材验收与发布前视觉 QA。
+12. 第 8 阶段审查：真实单课样片生产审查，有条件通过。
+13. Agent 协作设计：Course HUD Director Agent 总指挥工作流。
 
-当前已创建 React + TypeScript + Vite + Remotion 工程骨架，完成可编辑 lesson 配置的编辑器 MVP，完成简化时间轴阶段/事件编辑与 HUD 联动预览，并接入第 6 阶段本地单节课渲染链路。第 6 阶段审查结论为有条件通过，当前无 P0 阻断项；审查整改已补齐安全小样成功出片、`mix` 预检收紧、still/clip 脚本和 `npm test` 聚合。
+当前已创建 React + TypeScript + Vite + Remotion 工程骨架，完成可编辑 lesson 配置的编辑器 MVP，完成简化时间轴阶段/事件编辑与 HUD 联动预览，并接入第 6 阶段本地单节课渲染链路。第 7 阶段已将默认视觉模板收敛为 `default-ai-tactical` / `AI Tactical HUD` / “AI 战术课程指挥界面”。第 8 阶段已使用用户提供的真实主课程视频创建 `lesson-01.sample`，跑通 preflight、smoke、still、clip 和完整 MP4 渲染，输出 `out/lesson-01-sample.mp4`。第 8 阶段审查结论为有条件通过，无 P0 阻断项。
 
-当前建议下一步由 Course HUD Director Agent 接管，准备用户授权真实素材，替换 `lesson-01` 占位路径，并用已验证的第 6 阶段命令跑通真实课程素材路径，再进入第 7 阶段：lesson JSON 导入、HUD 展示组件收敛、视觉定稿和发布前检查清单。`lesson-render-fixture` 只能证明本地安全小样链路可出片，不能替代用户真实课程素材验收。
+当前建议下一步进入第 9 阶段：实现 lesson JSON 导入能力，增加按 lesson id 输入的 HUD 状态测试脚本，并继续收敛编辑器预览 HUD 与 Remotion HUD 的无交互展示组件。`lesson-01.sample` 已证明一条真实单课样片链路可出片，但不代表批量生产、长讲师视频小窗、自动字幕、AI 自动识别、云端渲染或复杂剪辑能力已经完成。若第 9 阶段被定义为“批量生产与项目管理”，必须先关闭第 8 阶段审查 P1。
 
 GitHub 公开发布决策：
 
@@ -592,6 +595,146 @@ GitHub 公开发布决策：
 3. `public/input/...` 下生成或放入的媒体素材、`out/...` 渲染产物均不提交。
 4. 最终 Remotion composition 不得引入按钮、输入框、拖动条、播放器控件或编辑器组件。
 
+## 第 7 阶段成果记忆
+
+阶段目标：
+1. 启动 Course HUD Director Agent，按附件要求高质量执行第 7 阶段。
+2. 将最终视频 HUD 视觉收敛为第一套默认模板 `default-ai-tactical` / `AI Tactical HUD` / “AI 战术课程指挥界面”。
+3. 在不扩大产品边界的前提下，完成主视频优先布局、HUD 视觉精修、模板文档化和基础视觉验收。
+
+已完成：
+1. 已由 Course HUD Director Agent 统筹，并将事实边界、UI 视觉、渲染证据验收分配给对应岗位 Agent 并行审查。
+2. 事实边界岗位确认第 7 阶段只做视觉精修与模板定稿，不做真实课程样片、批量渲染、云端、登录、数据库、AI 自动识别、自动字幕、复杂剪辑或自由拖拽。
+3. UI 视觉岗位确认主要差距并推动修正：主视频区域扩大、右侧栏收窄、底部 HUD 降噪、状态样式补齐、Remotion 展示层从内联样式收敛到 class/token。
+4. 渲染证据岗位确认 `lesson-01` 正式 preflight 失败仍是占位主视频保护，视觉验收应使用 `lesson-render-fixture` 安全小样。
+5. 新增 `default-ai-tactical` 视觉 token、布局变量、状态色和 render 模式 HUD 样式。
+6. 重构 Remotion `HudLayer` 为纯展示层，不引用编辑器组件、不包含按钮、输入框、选择框或交互暗示。
+7. 更新 `MainVideoLayer`、`SpeakerLayer` 和编辑器 16:9 预览槽位，使最终画面主视频优先、右侧栏辅助、底部课程阶段条克制。
+8. 新增第 7 阶段视觉精修说明和默认模板规格文档，并同步 README 文档地图与阶段记忆。
+
+关键产物：
+1. `docs/STAGE_7_VISUAL_POLISH_NOTES.md`：第 7 阶段视觉精修说明、边界、组件变化、验收口径和后续建议。
+2. `docs/STAGE_7_VISUAL_TEMPLATE_SPEC.md`：`default-ai-tactical` 默认模板规格，包含定位、布局、颜色、字体、组件、状态、动效和禁止项。
+3. `docs/superpowers/plans/2026-06-17-stage-7-visual-polish.md`：Course HUD Director Agent 第 7 阶段执行计划。
+4. `src/styles/tokens.css`：默认模板视觉 token、状态色、发光和布局尺寸。
+5. `src/styles/hud.css`：最终视频 HUD 展示样式、右侧栏、阶段条、提示、任务、地图、讲师卡和底部状态。
+6. `src/styles/editor.css`：编辑器预览槽位与第 7 阶段最终模板安全区同步。
+7. `src/remotion/layers/HudLayer.tsx`：Remotion 纯展示 HUD 层。
+8. `src/remotion/layers/MainVideoLayer.tsx`：主视频视觉外壳。
+9. `src/remotion/layers/SpeakerLayer.tsx`：讲师小窗和身份卡视觉外壳。
+
+已冻结决策：
+1. 第一套默认模板固定命名为 `default-ai-tactical`，视觉名为 `AI Tactical HUD`，中文名为“AI 战术课程指挥界面”。
+2. 主视频区域是最终画面第一优先级；右侧栏、讲师卡、底部状态和课程阶段条都是辅助信息。
+3. CourseStageBar 继续是学习导航，不是播放器进度条；不得出现播放头、时间码、拖动手柄或连续进度填充。
+4. Remotion composition 只能保留最终展示层，不得引用 `PreviewCanvas`、`VideoPreviewController`、`EditorShell`、`PropertyPanel`、`TimelinePanel` 或任何编辑器交互层。
+5. 第 7 阶段不做真实课程样片；`lesson-render-fixture` 只能证明安全小样视觉链路，不能替代用户真实课程素材验收。
+6. 不引入多主题市场、自由拖拽布局、云端部署、批量队列、AI 自动识别、自动字幕、BGM、降噪或 ducking。
+
+后续接手注意：
+1. `lesson-01` 仍是主项目示例配置，主视频路径保持占位；它的 preflight 失败是预期保护。
+2. 真实素材必须由用户授权提供，并放在 ignored 的 `public/input/...` 路径下，不得提交。
+3. 后续改视觉优先改 `src/styles/tokens.css` 和 `src/styles/hud.css`，不要在 Remotion 组件内继续堆内联颜色和阴影。
+4. 任何最终视频层新增代码都必须扫描 `src/remotion`，确认没有控件、editor-only 引用、`onClick`、`role="button"`、`tabIndex` 或 `controls`。
+5. 编辑器 HUD 与 Remotion HUD 仍未完全组件合并；后续收敛只能抽无交互展示组件，不能把编辑器选择层带进 Remotion。
+
+下一阶段建议：
+1. 进入第 8 阶段：用户真实授权素材验收与发布前视觉 QA。
+2. 替换 `lesson-01` 后跑通 `npm run preflight:render -- lesson-01`、`npm run render:smoke -- lesson-01`、`npm run render:still -- lesson-01 --times ...`、`npm run render:clip -- lesson-01 --from ... --duration ...` 和 `npm run render:lesson -- lesson-01`。
+3. 输出真实单课样片验收记录，重点检查主视频遮挡、音频、关键时间点、右侧提示和最终无控件。
+4. 继续补 lesson JSON 导入。
+5. 继续收敛编辑器和 Remotion 的无交互 HUD 展示组件，并建立发布前视觉 QA 截图对照流程。
+
+## 第 8 阶段成果记忆
+
+阶段目标：
+1. 启动 Course HUD Director Agent，按附件要求高质量执行第 8 阶段。
+2. 将真实素材准备、授权边界、课程结构、渲染证据和 QA 文档分配给对应岗位 Agent 执行。
+3. 使用用户真实授权素材跑通单课样片，并保持第 0-7 阶段产品边界。
+
+已完成：
+1. 已由 Course HUD Director Agent 统筹，并将事实边界、隐私授权、教学设计、证据验收分配给对应岗位 Agent 并行审查。
+2. 已创建素材目录并在素材缺失时生成 `docs/STAGE_8_ASSET_MISSING_REPORT.md`，等待用户确认后继续执行。
+3. 用户确认“已放好”后，识别真实素材：`public/input/videos/lesson-01-main.mp4.mp4` 和 `public/input/videos/lesson-01-speaker.mp4.mp4`。
+4. 已用媒体探测确认主视频约 503.94 秒、1280 x 720、24 fps；讲师视频约 9.71 秒、1080 x 1920、30 fps。
+5. 因讲师视频短于主视频，已从讲师视频首帧派生 `public/input/images/lesson-01-speaker-avatar.png`，样片采用头像小窗和 `audio.mode = "main-only"`。
+6. 已新增 `src/data/lessons/lesson-01.sample.json`，基于真实视频观察配置 5 个阶段、5 个任务、5 个地图节点和关键 `timelineEvents`。
+7. 已跑通 `npm run validate:lessons`、`npm run typecheck`、`npm run preflight:render -- lesson-01.sample`、`render:smoke`、12 张 still、4 段 clip 和完整 `render:lesson`。
+8. 完整输出 `out/lesson-01-sample.mp4`，`ffprobe` 确认为 H.264、1920 x 1080、30 fps、约 504 秒，AAC 48 kHz 双声道音频。
+9. 已静态扫描 `src/remotion`，未命中播放器控件、表单控件、编辑器组件或交互暗示。
+10. 已新增第 8 阶段生产说明、QA 报告、问题 backlog，并更新 README 文档地图和阶段记忆。
+11. 已完成第 8 阶段真实单课样片生产审查，结论为有条件通过，无 P0 阻断项。
+
+关键产物：
+1. `src/data/lessons/lesson-01.sample.json`：真实授权素材样片配置。
+2. `docs/STAGE_8_ASSET_MISSING_REPORT.md`：第 8 阶段前置素材阻断记录，后续已更新为素材到位状态。
+3. `docs/STAGE_8_SAMPLE_PRODUCTION_NOTES.md`：真实样片生产说明、素材策略、命令和输出记录。
+4. `docs/STAGE_8_SAMPLE_QA_REPORT.md`：真实样片 QA 报告、ffprobe 结果、still/clip 验收和控件边界检查。
+5. `docs/STAGE_8_ISSUE_BACKLOG.md`：讲师素材、脚本复核、HUD 测试脚本和素材命名等后续问题。
+6. `docs/STAGE_8_SAMPLE_PRODUCTION_REVIEW.md`：第 8 阶段审查报告，记录评分、P0/P1/P2、命令结果、样片质量结论和第 9 阶段放行意见。
+7. `docs/sample-lessons/lesson-01-outline.md`：基于真实视频画面观察整理的阶段和事件草稿。
+8. `out/lesson-01-sample.mp4`：本地真实样片输出，受 `.gitignore` 排除。
+
+已冻结决策：
+1. 第 8 阶段真实样片使用独立 lesson id `lesson-01.sample`，不覆盖原 `lesson-01.json`。
+2. 用户真实素材和 `out/` 渲染产物不得提交到 Git。
+3. 讲师视频短于主视频时，默认采用头像 fallback 和 `main-only` 音频；不能声称长讲师视频小窗链路已经验收。
+4. `homework_show` 属于 HUD 教学设计，不是源视频字幕原文，正式发布前应由课程主理人确认。
+5. 第 8 阶段不引入批量渲染、云端、登录、数据库、AI 自动识别、自动字幕、BGM、降噪、ducking、多轨剪辑或自由拖拽。
+6. 第 8 阶段审查有条件通过；第 9 阶段可进入导入、测试泛化、QA 自动化和批量前准备，但不建议直接进入正式批量生产。
+
+后续接手注意：
+1. 用户素材文件名为 `.mp4.mp4` 双后缀，配置已按实际路径引用，没有移动或重命名原文件。
+2. 讲师视频实际放在 `public/input/videos/`，不是建议的 `public/input/speakers/`。
+3. `lesson-01.sample.json` 的课程结构来自画面观察，不是完整逐字稿，后续需课程主理人复核。
+4. `npm run test:hud` 仍主要覆盖原 `lesson-01.json` 关键点，后续应支持按 lesson id 和时间点输入。
+5. 主视频源为 1280 x 720，最终输出为 1920 x 1080，清晰度上限受源文件影响。
+
+下一阶段建议：
+1. 进入第 9 阶段：实现 lesson JSON 导入能力。
+2. 增加 `lesson-01.sample` 的可复跑 HUD 状态测试。
+3. 自动生成 still contact sheet 和发布前截图对照。
+4. 提供完整讲师长视频后，单独验收讲师小窗视频链路。
+5. 继续收敛编辑器预览 HUD 与 Remotion HUD 的无交互展示组件。
+
+## 第 8 阶段审查成果记忆
+
+阶段目标：
+1. 根据附件要求审查第 8 阶段真实单课样片生产。
+2. 按 Course HUD Director Agent 工作流，从事实边界、素材安全、数据模型、渲染工程、视觉 QA 和证据验收角度判断是否通过。
+3. 判断是否允许进入第 9 阶段，并明确不能直接放大的风险。
+
+已完成：
+1. 已阅读第 0-8 阶段核心文档、`lesson-01.sample.json`、第 8 阶段生产说明、QA 报告、问题 backlog、素材缺失报告和课程 outline。
+2. 已重新运行 `npm test`、`npm run typecheck`、`npm run build`、`npm run preflight:render -- lesson-01.sample` 和 `npm run render:smoke -- lesson-01.sample`，均通过。
+3. 已用 `ffprobe` 核验 `out/lesson-01-sample.mp4` 为 H.264、1920 x 1080、30 fps、约 504 秒，并包含 AAC 48 kHz 双声道音频。
+4. 已重新扫描 `src/remotion`，未发现播放器控件、表单控件、编辑器组件或交互暗示。
+5. 已目检 `lesson-01.sample` 的 0、240、432、485 秒 still，确认无播放器控件，主视频核心内容未被严重遮挡，CourseStageBar 仍是学习导航。
+6. 已新增 `docs/STAGE_8_SAMPLE_PRODUCTION_REVIEW.md`，审查结论为有条件通过。
+
+关键产物：
+1. `docs/STAGE_8_SAMPLE_PRODUCTION_REVIEW.md`：第 8 阶段审查报告，包含评分、P0/P1/P2、命令结果、视频画面审查、风险清单和第 9 阶段建议。
+
+已冻结决策：
+1. 第 8 阶段无 P0 阻断项，可以作为真实单课样片内部演示和用户回看。
+2. `lesson-01.sample` 不能代表批量生产、长讲师视频小窗、自动字幕、AI 自动识别、云端渲染或复杂剪辑能力完成。
+3. 如果第 9 阶段范围是 lesson JSON 导入、HUD 状态测试泛化、contact sheet 和 QA 自动化，可以进入。
+4. 如果第 9 阶段范围是“批量生产与项目管理”，不建议直接进入正式批量生产，必须先关闭第 8 阶段审查 P1。
+
+后续接手注意：
+1. P1：`docs/STAGE_8_ISSUE_BACKLOG.md` 需要改成结构化 issue 表，补 `issueId`、`module`、`suggestedPhase`、`fix` 和 `status`。
+2. P1：`npm run test:hud` 尚未覆盖 `lesson-01.sample`，需要支持按 lesson id 和时间点输入。
+3. P1：`lesson-01.sample` 阶段和事件来自画面观察，课程主理人还需要复核。
+4. P1：讲师视频只有 9.7 秒，长讲师视频小窗和讲师音频链路未验收。
+5. P2：`docs/STAGE_8_ASSET_MISSING_REPORT.md` 顶部仍像当前素材缺失报告，应改为历史阻断记录。
+
+下一阶段建议：
+1. 优先实现 lesson JSON 导入。
+2. 增加 `lesson-01.sample` 可复跑 HUD 状态测试。
+3. 自动生成 still contact sheet 和发布前截图对照。
+4. 结构化第 8 阶段 backlog。
+5. 进入正式批量生产前，至少再用一条不同真实课程素材跑通同样链路。
+
 ## 当前任务状态速记
 
 任务结论：
@@ -600,7 +743,10 @@ GitHub 公开发布决策：
 3. 第 6 阶段本地单节课渲染链路已完成本轮 Course HUD Director Agent 高质量执行与岗位复查。
 4. 第 6 阶段审查已完成，结论为有条件通过，无 P0 阻断项。
 5. 第 6 阶段审查整改已完成可落地项，并用 `lesson-render-fixture` 跑通安全小样成功路径。
-6. 当前可以进入第 7 阶段前置验收与视觉精修准备，但用户真实课程素材仍需替换 `lesson-01` 后单独验收。
+6. 第 7 阶段 HUD 视觉精修与默认模板定稿已完成，默认模板为 `default-ai-tactical`。
+7. 第 8 阶段真实授权素材验收与发布前视觉 QA 已完成，真实样片使用独立 `lesson-01.sample` 配置。
+8. 第 8 阶段审查已完成，结论为有条件通过，无 P0 阻断项。
+9. 当前可以进入第 9 阶段 lesson JSON 导入、HUD 状态测试泛化和展示组件收敛；如果第 9 阶段按“批量生产与项目管理”执行，必须先关闭第 8 阶段审查 P1。
 
 已验证通过：
 1. `npm test` 通过，已聚合 `validate:lessons`、`test:hud` 和 `test:preflight`。
@@ -608,20 +754,33 @@ GitHub 公开发布决策：
 3. `npm run build` 通过。
 4. `npm run render:sample` 通过，但仍使用占位素材 fallback。
 5. `npm run preflight:render -- lesson-01` 当前因占位主视频缺失退出非 0，这是第 6 阶段预检的预期保护。
-6. 本地编辑器和 Remotion Studio 均可启动。
-7. `src/remotion` 静态扫描未发现播放器控件、表单控件、编辑器预览组件或 editor-only 引用。
-8. 最终 Remotion composition 未发现播放器控件或编辑器交互控件。
-9. 第 6 阶段审查报告已新增到 `docs/STAGE_6_RENDERER_REVIEW.md`。
-10. `lesson-render-fixture` 的 preflight、smoke、still、clip 和正式 render 已跑通；最终 MP4 为 1920 x 1080、30fps、12 秒。
+6. 本地编辑器 Vite dev 临时启动到 `http://127.0.0.1:5181/` 并返回 HTTP 200。
+7. Remotion Studio 临时启动到 `http://127.0.0.1:3011/` 并返回 HTTP 200。
+8. `src/remotion` 静态扫描未发现播放器控件、表单控件、编辑器预览组件或 editor-only 引用。
+9. 最终 Remotion composition 未发现播放器控件或编辑器交互控件。
+10. `npm run preflight:render -- lesson-render-fixture` 通过。
+11. `npm run render:smoke -- lesson-render-fixture` 通过。
+12. `npm run render:still -- lesson-render-fixture --times 0,2,4,6,7,10` 通过，并已目检关键帧。
+13. `npm run render:clip -- lesson-render-fixture --from 1.5 --duration 5` 通过。
+14. `npm run render:lesson -- lesson-render-fixture` 通过；`ffprobe` 确认最终 MP4 为 1920 x 1080、30fps、12 秒。
+15. `npm run preflight:render -- lesson-01.sample` 通过。
+16. `npm run render:smoke -- lesson-01.sample` 通过。
+17. `npm run render:still -- lesson-01.sample --times 0,30,92,146,176,240,288,300,432,450,485,500` 通过，并已目检关键帧。
+18. `npm run render:clip -- lesson-01.sample --from 236 --duration 20`、`--from 284 --duration 16`、`--from 428 --duration 20`、`--from 480 --duration 22` 均通过。
+19. `npm run render:lesson -- lesson-01.sample` 通过；`ffprobe` 确认 `out/lesson-01-sample.mp4` 为 H.264、1920 x 1080、30fps、约 504 秒，并包含 AAC 双声道音频。
+20. `src/remotion` 控件静态扫描无命中。
 
 当前分支与工作区：
 1. 当前工作分支为 `codex/stage-5-timeline-editor`。
-2. 工作区包含第 4、第 5、第 6 阶段未提交改动和新增文件，后续 Agent 不得误删或回滚。
+2. 工作区包含第 4、第 5、第 6、第 7 阶段未提交改动和新增文件，后续 Agent 不得误删或回滚。
 3. 第 6 阶段核心新增文件包括 `docs/STAGE_6_RENDERER_NOTES.md`、`docs/STAGE_6_RENDERER_REVIEW.md`、`scripts/preflight-render.ts`、`scripts/render-lesson.ts`、`scripts/render-smoke.ts`、`scripts/render-still.ts`、`scripts/render-clip.ts`、`scripts/test-hud-state.ts`、`scripts/test-preflight-render.ts`、`scripts/media-paths.ts`、`scripts/render-utils.ts`、`src/data/lessons/lesson-render-fixture.json`、`src/utils/media.ts` 和 `src/utils/mediaFit.ts`。
-4. 本轮补强涉及 `src/remotion/CourseShellComposition.tsx`、`src/remotion/layers/SpeakerLayer.tsx`、`src/remotion/layers/HudLayer.tsx`、`src/schemas/lesson.schema.ts`、`src/utils/timeline.ts`、`src/utils/eventRules.ts`、`scripts/preflight-render.ts`、`.gitignore`、`package.json` 和 `package-lock.json`。
+4. 第 7 阶段核心新增文件包括 `docs/STAGE_7_VISUAL_POLISH_NOTES.md`、`docs/STAGE_7_VISUAL_TEMPLATE_SPEC.md` 和 `docs/superpowers/plans/2026-06-17-stage-7-visual-polish.md`。
+5. 第 7 阶段补强涉及 `README.md`、`AGENTS.MD`、`src/styles/tokens.css`、`src/styles/hud.css`、`src/styles/editor.css`、`src/remotion/CourseShellComposition.tsx`、`src/remotion/layers/HudLayer.tsx`、`src/remotion/layers/MainVideoLayer.tsx` 和 `src/remotion/layers/SpeakerLayer.tsx`。
+6. 第 8 阶段核心新增文件包括 `src/data/lessons/lesson-01.sample.json`、`docs/STAGE_8_ASSET_MISSING_REPORT.md`、`docs/STAGE_8_SAMPLE_PRODUCTION_NOTES.md`、`docs/STAGE_8_SAMPLE_QA_REPORT.md`、`docs/STAGE_8_ISSUE_BACKLOG.md`、`docs/STAGE_8_SAMPLE_PRODUCTION_REVIEW.md` 和 `docs/sample-lessons/lesson-01-outline.md`。
+7. 第 8 阶段本地素材与输出包括 `public/input/videos/lesson-01-main.mp4.mp4`、`public/input/videos/lesson-01-speaker.mp4.mp4`、`public/input/images/lesson-01-speaker-avatar.png` 和 `out/lesson-01-sample.mp4`，均不得提交。
 
 下一位 Agent 开工顺序：
-1. 先读 `README.md`、`AGENTS.MD`、`docs/STAGE_5_TIMELINE_EDITOR_REVIEW.md`、`docs/STAGE_6_RENDERER_NOTES.md` 和 `docs/STAGE_6_RENDERER_REVIEW.md`。
-2. 先准备授权安全真实素材，替换 `lesson-01` 的主视频、讲师视频和头像路径。
-3. 跑通 `npm run preflight:render -- lesson-01`、`npm run render:smoke -- lesson-01`、`npm run render:still -- lesson-01 --times ...`、`npm run render:clip -- lesson-01 --from ... --duration ...` 和 `npm run render:lesson -- lesson-01` 的真实课程成功路径。
-4. 再实现 lesson JSON 导入和 HUD 展示组件收敛。
+1. 先读 `README.md`、`AGENTS.MD`、`docs/STAGE_8_SAMPLE_PRODUCTION_REVIEW.md`、`docs/STAGE_8_SAMPLE_PRODUCTION_NOTES.md`、`docs/STAGE_8_SAMPLE_QA_REPORT.md`、`docs/STAGE_8_ISSUE_BACKLOG.md` 和 `src/data/lessons/lesson-01.sample.json`。
+2. 优先实现 lesson JSON 导入能力，让导出的或新增的 lesson 配置可重新进入编辑器。
+3. 增加按 lesson id 和时间点输入的 HUD 状态测试脚本，覆盖 `lesson-01.sample` 的 0、30、92、146、176、240、288、300、432、450、485、500 秒。
+4. 再推进 HUD 展示组件收敛、自动 contact sheet 和发布前视觉 QA 截图对照。

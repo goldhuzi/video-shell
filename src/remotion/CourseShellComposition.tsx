@@ -4,6 +4,8 @@ import { deriveHudState } from "../utils/timeline";
 import { HudLayer } from "./layers/HudLayer";
 import { MainVideoLayer } from "./layers/MainVideoLayer";
 import { SpeakerLayer } from "./layers/SpeakerLayer";
+import "../styles/tokens.css";
+import "../styles/hud.css";
 
 export type CourseShellAudioMode =
   | "main-only"
@@ -273,14 +275,7 @@ export const CourseShellComposition = ({
 
   return (
     <AbsoluteFill
-      style={{
-        background:
-          "radial-gradient(circle at 32% 18%, rgba(45, 113, 255, 0.18), transparent 28%), linear-gradient(135deg, #07101b 0%, #101521 52%, #07090f 100%)",
-        color: "#edf7ff",
-        fontFamily:
-          "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif",
-        overflow: "hidden",
-      }}
+      className="course-shell-render theme-default-ai-tactical is-render-mode"
     >
       <MainVideoLayer
         fitMode={mainVideoFitMode}

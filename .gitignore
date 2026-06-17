@@ -10,11 +10,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-public/input/videos/*.mp4
-public/input/videos/*.mov
-public/input/videos/*.mkv
-public/input/speakers/*.mp4
-public/input/speakers/*.mov
-public/input/speakers/*.mkv
+public/input/videos/*
+!public/input/videos/.gitkeep
+public/input/speakers/*
+!public/input/speakers/.gitkeep
 public/input/images/*
 !public/input/images/.gitkeep

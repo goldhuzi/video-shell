@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import type { LessonProjectConfigLike } from "../CourseShellComposition";
 
 type HudRuntimeStateLike = {
@@ -63,19 +62,6 @@ type HudLayerProps = {
   currentTime: number;
 };
 
-const panelStyle: CSSProperties = {
-  border: "1px solid rgba(114, 207, 255, 0.28)",
-  background: "rgba(5, 13, 24, 0.78)",
-  boxShadow: "0 0 0 1px rgba(255,255,255,0.04) inset",
-};
-
-const labelStyle: CSSProperties = {
-  fontSize: 12,
-  fontWeight: 800,
-  color: "rgba(125, 229, 255, 0.78)",
-  letterSpacing: 0,
-};
-
 const getCurrentStage = (
   lesson: LessonProjectConfigLike,
   hudState: HudRuntimeStateLike,
@@ -87,32 +73,68 @@ const getCourseMeta = (lesson: LessonProjectConfigLike) => {
   return lesson.meta ?? lesson.course;
 };
 
-const stateColor = (state?: string) => {
-  if (state === "current" || state === "unlocked") {
-    return "#7df0ff";
+const stateClass = (state?: string): string => {
+  if (state === "current") {
+    return "render-is-current";
   }
 
   if (state === "completed") {
-    return "#54e6a0";
+    return "render-is-completed";
+  }
+
+  if (state === "unlocked") {
+    return "render-is-unlocked";
   }
 
   if (state === "locked") {
-    return "rgba(148, 162, 180, 0.34)";
+    return "render-is-locked";
   }
 
-  return "rgba(190, 211, 229, 0.62)";
+  return "render-is-not_started";
 };
 
-const getPositionStyle = (positionPreset?: string) => {
+const stateLabel = (state?: string): string => {
+  if (state === "current") {
+    return "ACTIVE";
+  }
+
+  if (state === "completed") {
+    return "DONE";
+  }
+
+  if (state === "unlocked") {
+    return "OPEN";
+  }
+
+  if (state === "locked") {
+    return "LOCK";
+  }
+
+  return "NEXT";
+};
+
+const stageStateLabel = (state?: string): string => {
+  if (state === "current") {
+    return "当前模块";
+  }
+
+  if (state === "completed") {
+    return "已完成";
+  }
+
+  return "待启动";
+};
+
+const getPositionClass = (positionPreset?: string) => {
   if (positionPreset === "bottom-right") {
-    return { left: 1152, top: 940 };
+    return "is-bottom-right";
   }
 
   if (positionPreset === "in-bottom-hud") {
-    return { left: 304, top: 940 };
+    return "is-in-bottom-hud";
   }
 
-  return { left: 24, top: 940 };
+  return "is-bottom-left";
 };
 
 const asStringList = (value: unknown): string[] => {
@@ -206,76 +228,25 @@ const TopHeader = ({
   }
 
   return (
-    <div
-      style={{
-        ...panelStyle,
-        position: "absolute",
-        left: 24,
-        top: 16,
-        width: 1872,
-        height: 64,
-        display: "grid",
-        gridTemplateColumns: "1fr auto 260px",
-        alignItems: "center",
-        padding: "0 22px",
-      }}
-    >
-      <div style={{ minWidth: 0 }}>
-        <div
-          style={{
-            fontSize: 25,
-            fontWeight: 850,
-            color: "#f2fbff",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
+    <div className="render-hud-panel render-top-header">
+      <div className="render-top-brand">
+        <span>{course?.courseCode ?? "COURSE HUD"}</span>
+        <strong>{lessonCounter ?? "LESSON"}</strong>
+      </div>
+      <div className="render-top-title">
+        <strong>
           {course?.courseTitle ??
             lesson.meta?.projectName ??
             lesson.project?.name ??
             "Course HUD"}
-        </div>
-        <div
-          style={{
-            marginTop: 3,
-            fontSize: 13,
-            color: "rgba(194, 220, 238, 0.76)",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {course?.lessonTitle ?? course?.chapterTitle ?? course?.mainMission}
-        </div>
+        </strong>
+        <span>{course?.lessonTitle ?? course?.chapterTitle ?? course?.mainMission}</span>
       </div>
-      <div
-        style={{
-          marginRight: 34,
-          fontSize: 15,
-          fontWeight: 800,
-          color: "#9decff",
-        }}
-      >
-        {lesson.layout?.topHeader?.showCurrentStage === false
-          ? course?.courseCode
-          : currentStageName ?? course?.mainMission}
-      </div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "flex-end",
-          gap: 12,
-          alignItems: "center",
-          fontSize: 13,
-          fontWeight: 800,
-          color: "#eef9ff",
-        }}
-      >
-        <span style={{ color: "rgba(125, 229, 255, 0.82)" }}>
-          {course?.statusLabel ?? "MISSION LIVE"}
-        </span>
-        <span>{lessonCounter}</span>
+      <div className="render-top-status">
+        <span>{lesson.layout?.topHeader?.showCurrentStage === false
+          ? course?.mainMission
+          : currentStageName ?? course?.mainMission}</span>
+        <strong className="render-status-pill">{course?.statusLabel ?? "MISSION LIVE"}</strong>
       </div>
     </div>
   );
@@ -293,42 +264,23 @@ const LecturerMiniCard = ({ lesson }: { lesson: LessonProjectConfigLike }) => {
     return null;
   }
 
-  const positionStyle = getPositionStyle(
+  const positionClass = getPositionClass(
     lesson.layout?.lecturer?.positionPreset ??
       lesson.speaker?.positionPreset ??
       lesson.lecturer?.positionPreset,
   );
+  const name = lesson.lecturer?.name ?? lesson.speaker?.name ?? "LECTURER";
+  const role =
+    lesson.lecturer?.role ??
+    lesson.lecturer?.title ??
+    lesson.speaker?.role ??
+    lesson.speaker?.title ??
+    "ON AIR";
 
   return (
-    <div
-      style={{
-        position: "absolute",
-        ...positionStyle,
-        width: 260,
-        height: 112,
-        pointerEvents: "none",
-        border: "1px solid rgba(125, 229, 255, 0.56)",
-        boxShadow: "0 0 22px rgba(64, 174, 255, 0.12) inset",
-      }}
-    >
-      <div
-        style={{
-          position: "absolute",
-          left: 12,
-          bottom: 10,
-          maxWidth: 226,
-          padding: "5px 8px",
-          background: "rgba(4, 9, 16, 0.72)",
-          color: "#eefaff",
-          fontSize: 12,
-          fontWeight: 800,
-        }}
-      >
-        {lesson.lecturer?.name ?? lesson.speaker?.name ?? "LECTURER"}
-        <span style={{ marginLeft: 8, color: "rgba(170, 217, 245, 0.78)" }}>
-          {lesson.lecturer?.role ?? lesson.lecturer?.title ?? lesson.speaker?.role ?? lesson.speaker?.title ?? "ON AIR"}
-        </span>
-      </div>
+    <div className={`render-lecturer-overlay ${positionClass}`}>
+      <strong>{name}</strong>
+      <span>{role}</span>
     </div>
   );
 };
@@ -355,57 +307,19 @@ const ChapterMap = ({
   );
 
   return (
-    <div
-      style={{
-        ...panelStyle,
-        position: "absolute",
-        left: 1436,
-        top: 92,
-        width: 460,
-        height: 258,
-        padding: 18,
-      }}
-    >
-      <div style={labelStyle}>CHAPTER MAP</div>
-      <div style={{ marginTop: 16, display: "grid", gap: 12 }}>
+    <div className="render-hud-panel render-right-panel">
+      <div className="render-panel-label">CHAPTER MAP</div>
+      <div className="render-map-list">
         {nodes.slice(0, 5).map((node) => {
           const state = hudState.mapNodeStates?.[node.id] ?? node.defaultStatus;
           return (
             <div
+              className={`render-map-item ${stateClass(state)}`}
               key={node.id}
-              style={{
-                display: "grid",
-                gridTemplateColumns: "22px 1fr",
-                gap: 12,
-                alignItems: "center",
-                color: stateColor(state),
-                fontSize: 16,
-                fontWeight: state === "current" ? 850 : 650,
-              }}
             >
-              <div
-                style={{
-                  width: 16,
-                  height: 16,
-                  borderRadius: 8,
-                  border: `2px solid ${stateColor(state)}`,
-                  background:
-                    state === "completed" ? stateColor(state) : "transparent",
-                  boxShadow:
-                    state === "current"
-                      ? "0 0 18px rgba(125, 240, 255, 0.72)"
-                      : "none",
-                }}
-              />
-              <div
-                style={{
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                {node.label}
-              </div>
+              <span className="render-map-dot" />
+              <strong className="render-map-name">{node.label}</strong>
+              <small className="render-map-state">{stateLabel(state)}</small>
             </div>
           );
         })}
@@ -436,52 +350,19 @@ const TaskTracker = ({
   );
 
   return (
-    <div
-      style={{
-        ...panelStyle,
-        position: "absolute",
-        left: 1436,
-        top: 362,
-        width: 460,
-        height: 238,
-        padding: 18,
-      }}
-    >
-      <div style={labelStyle}>TASK TRACKER</div>
-      <div style={{ marginTop: 16, display: "grid", gap: 10 }}>
+    <div className="render-hud-panel render-right-panel">
+      <div className="render-panel-label">TASK TRACKER</div>
+      <div className="render-task-list">
         {tasks.slice(0, 5).map((task) => {
           const state = hudState.taskStates?.[task.id] ?? task.defaultStatus;
           return (
             <div
+              className={`render-task-item ${stateClass(state)}`}
               key={task.id}
-              style={{
-                display: "grid",
-                gridTemplateColumns: "4px 1fr",
-                gap: 10,
-                minHeight: 28,
-                alignItems: "center",
-                color: stateColor(state),
-                fontSize: 15,
-                fontWeight: state === "current" ? 850 : 650,
-              }}
             >
-              <div
-                style={{
-                  width: 4,
-                  height: 26,
-                  background: stateColor(state),
-                  opacity: state ? 1 : 0.42,
-                }}
-              />
-              <div
-                style={{
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                {task.label ?? task.title}
-              </div>
+              <span className="render-task-bar" />
+              <strong className="render-task-name">{task.label ?? task.title}</strong>
+              <small className="render-task-state">{stateLabel(state)}</small>
             </div>
           );
         })}
@@ -519,72 +400,19 @@ const WarningPanel = ({
   const noticeLines = getNoticeLines(hudState, sourceEventId);
 
   return (
-    <div
-      style={{
-        ...panelStyle,
-        position: "absolute",
-        left: 1436,
-        top: 612,
-        width: 460,
-        height: 260,
-        padding: 18,
-        borderColor:
-          hint?.hintType === "warning"
-            ? "rgba(255, 183, 77, 0.52)"
-            : "rgba(114, 207, 255, 0.28)",
-      }}
-      >
-      <div style={labelStyle}>{getNoticeLabel(hint?.hintType)}</div>
-      <div
-        style={{
-          marginTop: 22,
-          fontSize: 24,
-          fontWeight: 850,
-          color: "#f4fbff",
-          lineHeight: 1.18,
-        }}
-      >
+    <div className={`render-hud-panel render-right-panel render-warning-panel is-${hint?.hintType ?? "info"}`}>
+      <div className="render-panel-label">{getNoticeLabel(hint?.hintType)}</div>
+      <div className="render-notice-title">
         {hint?.title ?? "等待时间轴提示"}
       </div>
-      <div
-        style={{
-          marginTop: 14,
-          fontSize: 17,
-          lineHeight: 1.45,
-          color: "rgba(217, 236, 248, 0.82)",
-        }}
-      >
+      <div className="render-notice-body">
         {hint?.body ?? "当前没有命中的重点提示事件。"}
       </div>
       {noticeLines.length > 0 ? (
-        <div
-          style={{
-            marginTop: 14,
-            display: "grid",
-            gap: 7,
-          }}
-        >
+        <div className="render-notice-lines">
           {noticeLines.map((line) => (
-            <div
-              key={line}
-              style={{
-                display: "grid",
-                gridTemplateColumns: "12px 1fr",
-                gap: 8,
-                alignItems: "center",
-                color: "rgba(214, 240, 255, 0.82)",
-                fontSize: 14,
-                lineHeight: 1.25,
-              }}
-            >
-              <span
-                style={{
-                  width: 6,
-                  height: 6,
-                  borderRadius: 6,
-                  background: "rgba(125, 229, 255, 0.86)",
-                }}
-              />
+            <div className="render-notice-line" key={line}>
+              <i />
               <span>{line}</span>
             </div>
           ))}
@@ -615,63 +443,20 @@ const CourseStageBar = ({
 
   return (
     <div
-      style={{
-        ...panelStyle,
-        position: "absolute",
-        left: 304,
-        top: 940,
-        width: 1108,
-        height: 112,
-        padding: "18px 20px",
-        display: "grid",
-        gridTemplateColumns: `repeat(${Math.max(stages.length, 1)}, 1fr)`,
-        gap: 10,
-        alignItems: "center",
-      }}
+      className="render-hud-panel render-stage-bar"
+      style={{ gridTemplateColumns: `repeat(${Math.max(stages.length, 1)}, minmax(0, 1fr))` }}
     >
       {stages.map((stage) => {
         const state = hudState.stageStates?.[stage.id];
         return (
           <div
+            className={`render-stage-segment ${stateClass(state)}`}
             key={stage.id}
-            style={{
-              height: 70,
-              border: `1px solid ${stateColor(state)}`,
-              background:
-                state === "current"
-                  ? "rgba(56, 158, 255, 0.18)"
-                  : "rgba(255,255,255,0.035)",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              padding: "0 12px",
-            }}
           >
-            <div
-              style={{
-                color: stateColor(state),
-                fontSize: 13,
-                fontWeight: 800,
-              }}
-            >
-              {state === "completed"
-                ? "COMPLETE"
-                : state === "current"
-                  ? "ACTIVE"
-                  : "STAGE"}
-            </div>
-            <div
-              style={{
-                marginTop: 6,
-                color: "#eefaff",
-                fontSize: 17,
-                fontWeight: 800,
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-              }}
-            >
-              {stage.shortName ?? stage.label ?? stage.name}
+            <span className="render-stage-node" />
+            <div>
+              <small>{stageStateLabel(state)}</small>
+              <strong>{stage.shortName ?? stage.label ?? stage.name}</strong>
             </div>
           </div>
         );
@@ -698,40 +483,16 @@ const BottomStatusHud = ({
   const statusLabel = getBottomStatusLabel(hudState, status?.sourceEventId);
 
   return (
-    <div
-      style={{
-        ...panelStyle,
-        position: "absolute",
-        left: 1436,
-        top: 940,
-        width: 460,
-        height: 112,
-        padding: 18,
-      }}
-    >
-      <div style={labelStyle}>{statusLabel}</div>
-      <div
-        style={{
-          marginTop: 13,
-          fontSize: 18,
-          lineHeight: 1.25,
-          color: "#eefaff",
-          fontWeight: 800,
-        }}
-      >
+    <div className={`render-hud-panel render-bottom-status is-${status?.kind ?? "idle"}`}>
+      <div className="render-panel-label">{statusLabel}</div>
+      <div className="render-bottom-title">
         {status?.title ??
           latestAbility?.label ??
           status?.label ??
           getCourseMeta(lesson)?.mainMission ??
           "课程任务待命"}
       </div>
-      <div
-        style={{
-          marginTop: 8,
-          fontSize: 13,
-          color: "rgba(187, 219, 238, 0.74)",
-        }}
-      >
+      <div className="render-bottom-body">
         {status?.message ??
           status?.body ??
           latestAbility?.description ??
@@ -747,6 +508,10 @@ export const HudLayer = ({
   currentTime,
 }: HudLayerProps) => {
   const currentStage = getCurrentStage(lesson, hudState);
+  const showRightStack =
+    lesson.layout?.rightSidebar?.visible !== false &&
+    lesson.layout?.showRightPanel !== false &&
+    lesson.layout?.rightSidebar?.displayMode !== "hidden";
 
   return (
     <>
@@ -755,9 +520,13 @@ export const HudLayer = ({
         currentStageName={currentStage?.shortName ?? currentStage?.name}
       />
       <LecturerMiniCard lesson={lesson} />
-      <ChapterMap lesson={lesson} hudState={hudState} />
-      <TaskTracker lesson={lesson} hudState={hudState} />
-      <WarningPanel lesson={lesson} hudState={hudState} />
+      {showRightStack ? (
+        <div className="render-right-stack">
+          <ChapterMap lesson={lesson} hudState={hudState} />
+          <TaskTracker lesson={lesson} hudState={hudState} />
+          <WarningPanel lesson={lesson} hudState={hudState} />
+        </div>
+      ) : null}
       <CourseStageBar lesson={lesson} hudState={hudState} />
       <BottomStatusHud
         lesson={lesson}

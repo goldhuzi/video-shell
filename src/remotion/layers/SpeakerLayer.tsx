@@ -32,61 +32,11 @@ const IdentityPlaceholder = ({
     .toUpperCase();
 
   return (
-    <div
-      style={{
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        alignItems: "center",
-        gap: 14,
-        padding: 14,
-        background:
-          "linear-gradient(135deg, rgba(13, 29, 46, 0.98), rgba(17, 18, 30, 0.98))",
-      }}
-    >
-      <div
-        style={{
-          width: 76,
-          height: 76,
-          borderRadius: 8,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          border: "1px solid rgba(123, 223, 255, 0.44)",
-          color: "#7de8ff",
-          fontSize: 28,
-          fontWeight: 800,
-        }}
-      >
-        {initials}
-      </div>
-      <div style={{ minWidth: 0 }}>
-        <div
-          style={{
-            fontSize: 22,
-            fontWeight: 800,
-            color: "#eefaff",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            maxWidth: 138,
-          }}
-        >
-          {name ?? "讲师席位"}
-        </div>
-        <div
-          style={{
-            marginTop: 5,
-            fontSize: 13,
-            color: "rgba(171, 222, 255, 0.72)",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            maxWidth: 138,
-          }}
-        >
-          {title ?? "身份牌占位"}
-        </div>
+    <div className="render-speaker-identity">
+      <div className="render-speaker-avatar">{initials}</div>
+      <div className="render-speaker-copy">
+        <strong>{name ?? "讲师席位"}</strong>
+        <span>{title ?? "身份牌占位"}</span>
       </div>
     </div>
   );
@@ -95,16 +45,16 @@ const IdentityPlaceholder = ({
 const mediaSrc = (asset?: MediaAssetLike): string | null =>
   resolveRemotionAssetSrc(asset?.src);
 
-const positionStyleFor = (positionPreset?: string) => {
+const positionClassFor = (positionPreset?: string) => {
   if (positionPreset === "bottom-right") {
-    return { left: 1152, top: 940 };
+    return "is-bottom-right";
   }
 
   if (positionPreset === "in-bottom-hud") {
-    return { left: 304, top: 940 };
+    return "is-in-bottom-hud";
   }
 
-  return { left: 24, top: 940 };
+  return "is-bottom-left";
 };
 
 export const SpeakerLayer = ({
@@ -207,42 +157,23 @@ export const SpeakerLayer = ({
     return null;
   }
 
-  const positionStyle = positionStyleFor(effectivePosition);
+  const positionClass = positionClassFor(effectivePosition);
 
   return (
-    <div
-      style={{
-        position: "absolute",
-        ...positionStyle,
-        width: 260,
-        height: 112,
-        border: "1px solid rgba(125, 219, 255, 0.42)",
-        background: "rgba(5, 10, 18, 0.9)",
-        overflow: "hidden",
-        boxShadow: "0 14px 32px rgba(0,0,0,0.35)",
-      }}
-    >
+    <div className={`render-speaker-card ${positionClass}`}>
       {safeVideoSrc ? (
         <Video
           src={safeVideoSrc}
           muted={muted}
           volume={muted ? 0 : volume}
           onError={() => setVideoFailed(true)}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-          }}
+          className="render-speaker-media"
         />
       ) : safeImageSrc ? (
         <Img
           src={safeImageSrc}
           onError={() => setImageFailed(true)}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-          }}
+          className="render-speaker-media"
         />
       ) : (
         <IdentityPlaceholder name={name} title={title} />

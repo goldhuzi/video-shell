@@ -1,0 +1,720 @@
+{
+  "schemaVersion": "0.3.0",
+  "meta": {
+    "projectId": "course-hud-sample-lesson-01",
+    "projectName": "第 8 阶段真实单课样片",
+    "courseTitle": "人类简史精读",
+    "lessonTitle": "虚构故事如何组织人类合作",
+    "chapterTitle": "《人类简史》：一个物种的征服史",
+    "lessonNumber": "Lesson 01",
+    "lessonIndex": 1,
+    "totalLessons": 1,
+    "courseCode": "SAPIENS",
+    "statusLabel": "MISSION LIVE",
+    "mainMission": "理解智人如何用共同故事完成大规模协作。",
+    "description": "第 8 阶段基于用户授权真实主视频制作的单课样片配置。",
+    "canvas": {
+      "width": 1920,
+      "height": 1080,
+      "fps": 30
+    },
+    "createdAt": "2026-06-17T00:00:00.000Z"
+  },
+  "media": {
+    "mainVideo": {
+      "id": "media-main-lesson-01-sample",
+      "kind": "main_video",
+      "label": "《人类简史》主课程视频",
+      "src": "/input/videos/lesson-01-main.mp4.mp4",
+      "duration": 503.942676,
+      "width": 1280,
+      "height": 720,
+      "mimeType": "video/mp4",
+      "required": true
+    },
+    "lecturerVideo": {
+      "id": "media-speaker-lesson-01-sample",
+      "kind": "lecturer_video",
+      "label": "讲师短视频素材",
+      "src": "/input/videos/lesson-01-speaker.mp4.mp4",
+      "duration": 9.706009,
+      "width": 1080,
+      "height": 1920,
+      "mimeType": "video/mp4",
+      "required": false
+    },
+    "lecturerAvatar": {
+      "id": "media-avatar-lesson-01-sample",
+      "kind": "avatar",
+      "label": "讲师视频派生头像",
+      "src": "/input/images/lesson-01-speaker-avatar.png",
+      "width": 720,
+      "height": 1280,
+      "mimeType": "image/png",
+      "required": false
+    },
+    "speakerVideo": {
+      "id": "media-speaker-lesson-01-sample",
+      "kind": "lecturer_video",
+      "label": "讲师短视频素材",
+      "src": "/input/videos/lesson-01-speaker.mp4.mp4",
+      "duration": 9.706009,
+      "width": 1080,
+      "height": 1920,
+      "mimeType": "video/mp4",
+      "required": false
+    },
+    "speakerImage": {
+      "id": "media-avatar-lesson-01-sample",
+      "kind": "avatar",
+      "label": "讲师视频派生头像",
+      "src": "/input/images/lesson-01-speaker-avatar.png",
+      "width": 720,
+      "height": 1280,
+      "mimeType": "image/png",
+      "required": false
+    },
+    "useSpeakerVideo": false,
+    "mainVideoFitMode": "contain",
+    "hudAssets": []
+  },
+  "audio": {
+    "mode": "main-only"
+  },
+  "speaker": {
+    "name": "课程讲师",
+    "title": "历史叙事导读",
+    "role": "历史叙事导读",
+    "stats": [
+      {
+        "label": "Course",
+        "value": "Sapiens"
+      },
+      {
+        "label": "Mode",
+        "value": "Guide"
+      }
+    ],
+    "bio": "第 8 阶段真实样片使用的讲师身份牌。",
+    "displayMode": "avatar",
+    "positionPreset": "bottom-left",
+    "assetPriority": ["avatar", "identity_card", "hidden"],
+    "missingAssetBehavior": "fallback_to_identity_card"
+  },
+  "layout": {
+    "aspectRatio": "16:9",
+    "showTopHeader": true,
+    "showRightPanel": true,
+    "showBottomHud": true,
+    "showLecturerCard": true,
+    "showCourseStageBar": true,
+    "canvas": {
+      "width": 1920,
+      "height": 1080
+    },
+    "mainVideoFitMode": "contain",
+    "mainVideoSafeArea": {
+      "showGuideInEditor": true,
+      "protectedRegions": ["center", "bottom"],
+      "notes": "主视频为 NotebookLM 横屏课件，右下角有 NotebookLM 标识，HUD 应保持主画面文字清晰可读。"
+    },
+    "topHeader": {
+      "visible": true,
+      "showCurrentStage": true
+    },
+    "rightSidebar": {
+      "visible": true,
+      "displayMode": "full"
+    },
+    "stageBar": {
+      "visible": true,
+      "displayMode": "standard"
+    },
+    "lecturer": {
+      "visible": true,
+      "positionPreset": "bottom-left"
+    },
+    "bottomStatusHud": {
+      "visible": true
+    }
+  },
+  "warning": {
+    "defaultHintId": "hint-core-question",
+    "items": [
+      {
+        "id": "hint-core-question",
+        "hintType": "key_point",
+        "title": "核心问题",
+        "body": "智人真正的优势，不只是力量，而是组织协作的能力。",
+        "stageId": "stage-opening",
+        "defaultDuration": 7
+      },
+      {
+        "id": "hint-cognitive-story",
+        "hintType": "key_point",
+        "title": "认知革命",
+        "body": "虚构故事让陌生人相信同一套规则，并一起行动。",
+        "stageId": "stage-cognitive",
+        "defaultDuration": 8
+      },
+      {
+        "id": "hint-cooperation-warning",
+        "hintType": "warning",
+        "title": "别误解协作",
+        "body": "大规模合作不只靠熟人关系，更依赖共同想象。",
+        "stageId": "stage-cognitive",
+        "defaultDuration": 8
+      },
+      {
+        "id": "hint-spread-summary",
+        "hintType": "summary",
+        "title": "迁徙与社会",
+        "body": "从血缘、迁徙到社会结构，智人不断扩大协作半径。",
+        "stageId": "stage-spread",
+        "defaultDuration": 8
+      },
+      {
+        "id": "hint-homework-story",
+        "hintType": "homework",
+        "title": "课后复盘",
+        "body": "找一个现代组织，拆解它依赖的共同故事。",
+        "stageId": "stage-modern",
+        "defaultDuration": 10
+      }
+    ]
+  },
+  "tasks": [
+    {
+      "id": "task-frame-question",
+      "label": "抓住课程问题",
+      "title": "抓住课程问题",
+      "description": "理解课程从物种优势切入人类历史。",
+      "stageId": "stage-opening",
+      "order": 0,
+      "defaultStatus": "current",
+      "autoCompletePrevious": true
+    },
+    {
+      "id": "task-compare-species",
+      "label": "比较人类物种",
+      "title": "比较人类物种",
+      "description": "看清智人与其他人类物种的差异。",
+      "stageId": "stage-species",
+      "order": 1,
+      "defaultStatus": "not_started",
+      "autoCompletePrevious": true
+    },
+    {
+      "id": "task-find-story",
+      "label": "识别虚构故事",
+      "title": "识别虚构故事",
+      "description": "理解故事如何承载共同信念。",
+      "stageId": "stage-cognitive",
+      "order": 2,
+      "defaultStatus": "not_started",
+      "autoCompletePrevious": true
+    },
+    {
+      "id": "task-map-spread",
+      "label": "梳理扩散路径",
+      "title": "梳理扩散路径",
+      "description": "把迁徙、DNA 与社会生活串起来。",
+      "stageId": "stage-spread",
+      "order": 3,
+      "defaultStatus": "not_started",
+      "autoCompletePrevious": true
+    },
+    {
+      "id": "task-modern-link",
+      "label": "连接现代世界",
+      "title": "连接现代世界",
+      "description": "解释石器时代大脑如何面对现代社会。",
+      "stageId": "stage-modern",
+      "order": 4,
+      "defaultStatus": "not_started",
+      "autoCompletePrevious": true
+    }
+  ],
+  "chapterMap": {
+    "displayMode": "vertical_route",
+    "nodes": [
+      {
+        "id": "node-opening",
+        "label": "问题",
+        "stageId": "stage-opening",
+        "order": 0,
+        "defaultStatus": "current"
+      },
+      {
+        "id": "node-species",
+        "label": "物种",
+        "stageId": "stage-species",
+        "order": 1,
+        "defaultStatus": "not_started"
+      },
+      {
+        "id": "node-cognitive",
+        "label": "故事",
+        "stageId": "stage-cognitive",
+        "order": 2,
+        "defaultStatus": "not_started"
+      },
+      {
+        "id": "node-spread",
+        "label": "扩散",
+        "stageId": "stage-spread",
+        "order": 3,
+        "defaultStatus": "not_started"
+      },
+      {
+        "id": "node-modern",
+        "label": "现代",
+        "stageId": "stage-modern",
+        "order": 4,
+        "defaultStatus": "not_started"
+      }
+    ]
+  },
+  "stages": [
+    {
+      "id": "stage-opening",
+      "label": "课程开场与核心问题",
+      "name": "课程开场与核心问题",
+      "shortName": "开场",
+      "startTime": 0,
+      "endTime": 92,
+      "mapNodeId": "node-opening",
+      "defaultTaskId": "task-frame-question",
+      "defaultHintId": "hint-core-question",
+      "order": 0,
+      "enabled": true
+    },
+    {
+      "id": "stage-species",
+      "label": "多物种人类与智人优势",
+      "name": "多物种人类与智人优势",
+      "shortName": "物种",
+      "startTime": 92,
+      "endTime": 176,
+      "mapNodeId": "node-species",
+      "defaultTaskId": "task-compare-species",
+      "defaultHintId": "hint-core-question",
+      "order": 1,
+      "enabled": true
+    },
+    {
+      "id": "stage-cognitive",
+      "label": "认知革命与虚构故事",
+      "name": "认知革命与虚构故事",
+      "shortName": "故事",
+      "startTime": 176,
+      "endTime": 300,
+      "mapNodeId": "node-cognitive",
+      "defaultTaskId": "task-find-story",
+      "defaultHintId": "hint-cognitive-story",
+      "order": 2,
+      "enabled": true
+    },
+    {
+      "id": "stage-spread",
+      "label": "智人扩散与社会结构",
+      "name": "智人扩散与社会结构",
+      "shortName": "扩散",
+      "startTime": 300,
+      "endTime": 450,
+      "mapNodeId": "node-spread",
+      "defaultTaskId": "task-map-spread",
+      "defaultHintId": "hint-spread-summary",
+      "order": 3,
+      "enabled": true
+    },
+    {
+      "id": "stage-modern",
+      "label": "石器时代大脑与现代世界",
+      "name": "石器时代大脑与现代世界",
+      "shortName": "现代",
+      "startTime": 450,
+      "endTime": 503.942676,
+      "mapNodeId": "node-modern",
+      "defaultTaskId": "task-modern-link",
+      "defaultHintId": "hint-homework-story",
+      "order": 4,
+      "enabled": true
+    }
+  ],
+  "timelineEvents": [
+    {
+      "id": "event-tip-opening",
+      "type": "tip_show",
+      "startTime": 30,
+      "endTime": 40,
+      "targetComponent": "warning_panel",
+      "payload": {
+        "hintId": "hint-core-question",
+        "title": "问题先行",
+        "text": "两百万年里人类并不强大，关键变化在协作方式。",
+        "level": "info"
+      },
+      "animation": {
+        "enter": "fade_up",
+        "exit": "fade",
+        "durationMs": 220
+      },
+      "priority": 82,
+      "enabled": true,
+      "label": "开场核心问题"
+    },
+    {
+      "id": "event-stage-species",
+      "type": "stage_change",
+      "startTime": 92,
+      "targetComponent": "course_stage_bar",
+      "payload": {
+        "stageId": "stage-species",
+        "status": "current",
+        "syncMapNode": true,
+        "syncDefaultTask": true,
+        "syncDefaultHint": true
+      },
+      "priority": 80,
+      "enabled": true,
+      "label": "进入物种对比"
+    },
+    {
+      "id": "event-map-species",
+      "type": "map_node_active",
+      "startTime": 92.5,
+      "targetComponent": "chapter_map",
+      "payload": {
+        "nodeId": "node-species",
+        "label": "物种",
+        "state": "current",
+        "completePrevious": true
+      },
+      "animation": {
+        "enter": "node_glow",
+        "durationMs": 300
+      },
+      "priority": 70,
+      "enabled": true
+    },
+    {
+      "id": "event-task-species",
+      "type": "task_active",
+      "startTime": 96,
+      "targetComponent": "task_tracker",
+      "payload": {
+        "taskId": "task-compare-species",
+        "label": "比较人类物种",
+        "state": "current",
+        "autoCompletePrevious": true
+      },
+      "priority": 76,
+      "enabled": true
+    },
+    {
+      "id": "event-tip-species",
+      "type": "tip_show",
+      "startTime": 146,
+      "endTime": 156,
+      "targetComponent": "warning_panel",
+      "payload": {
+        "title": "时间尺度",
+        "text": "从 700 万年前到 500 年前，课程正在建立人类演化坐标。",
+        "level": "info"
+      },
+      "animation": {
+        "enter": "fade_up",
+        "exit": "fade",
+        "durationMs": 220
+      },
+      "priority": 83,
+      "enabled": true
+    },
+    {
+      "id": "event-stage-cognitive",
+      "type": "stage_change",
+      "startTime": 176,
+      "targetComponent": "course_stage_bar",
+      "payload": {
+        "stageId": "stage-cognitive",
+        "status": "current",
+        "syncMapNode": true,
+        "syncDefaultTask": true,
+        "syncDefaultHint": true
+      },
+      "priority": 80,
+      "enabled": true,
+      "label": "进入认知革命"
+    },
+    {
+      "id": "event-task-species-done",
+      "type": "task_done",
+      "startTime": 174,
+      "targetComponent": "task_tracker",
+      "payload": {
+        "taskId": "task-compare-species",
+        "label": "比较人类物种",
+        "state": "completed"
+      },
+      "priority": 77,
+      "enabled": true
+    },
+    {
+      "id": "event-map-cognitive",
+      "type": "map_node_active",
+      "startTime": 176.5,
+      "targetComponent": "chapter_map",
+      "payload": {
+        "nodeId": "node-cognitive",
+        "label": "故事",
+        "state": "current",
+        "completePrevious": true
+      },
+      "animation": {
+        "enter": "node_glow",
+        "durationMs": 300
+      },
+      "priority": 70,
+      "enabled": true
+    },
+    {
+      "id": "event-task-cognitive",
+      "type": "task_active",
+      "startTime": 180,
+      "targetComponent": "task_tracker",
+      "payload": {
+        "taskId": "task-find-story",
+        "label": "识别虚构故事",
+        "state": "current",
+        "autoCompletePrevious": true
+      },
+      "priority": 76,
+      "enabled": true
+    },
+    {
+      "id": "event-warning-cooperation",
+      "type": "warning_show",
+      "startTime": 240,
+      "endTime": 252,
+      "targetComponent": "warning_panel",
+      "payload": {
+        "hintId": "hint-cooperation-warning",
+        "title": "别误解协作",
+        "text": "陌生人合作的根基，是手账、都市、国家都共享的想象。",
+        "level": "warning",
+        "syncBottomStatus": true
+      },
+      "animation": {
+        "enter": "fade_up",
+        "exit": "fade",
+        "durationMs": 220
+      },
+      "priority": 90,
+      "enabled": true
+    },
+    {
+      "id": "event-ability-story",
+      "type": "ability_unlock",
+      "startTime": 288,
+      "endTime": 296,
+      "targetComponent": "bottom_status_hud",
+      "payload": {
+        "abilityId": "ability-shared-story",
+        "label": "共同故事",
+        "description": "你已掌握大规模协作的关键解释框架。",
+        "nodeId": "node-cognitive",
+        "syncMapNode": true
+      },
+      "animation": {
+        "enter": "pulse",
+        "exit": "fade",
+        "durationMs": 320
+      },
+      "priority": 86,
+      "enabled": true
+    },
+    {
+      "id": "event-stage-spread",
+      "type": "stage_change",
+      "startTime": 300,
+      "targetComponent": "course_stage_bar",
+      "payload": {
+        "stageId": "stage-spread",
+        "status": "current",
+        "syncMapNode": true,
+        "syncDefaultTask": true,
+        "syncDefaultHint": true
+      },
+      "priority": 80,
+      "enabled": true,
+      "label": "进入扩散阶段"
+    },
+    {
+      "id": "event-task-cognitive-done",
+      "type": "task_done",
+      "startTime": 298,
+      "targetComponent": "task_tracker",
+      "payload": {
+        "taskId": "task-find-story",
+        "label": "识别虚构故事",
+        "state": "completed"
+      },
+      "priority": 77,
+      "enabled": true
+    },
+    {
+      "id": "event-map-spread",
+      "type": "map_node_active",
+      "startTime": 300.5,
+      "targetComponent": "chapter_map",
+      "payload": {
+        "nodeId": "node-spread",
+        "label": "扩散",
+        "state": "current",
+        "completePrevious": true
+      },
+      "animation": {
+        "enter": "node_glow",
+        "durationMs": 300
+      },
+      "priority": 70,
+      "enabled": true
+    },
+    {
+      "id": "event-task-spread",
+      "type": "task_active",
+      "startTime": 304,
+      "targetComponent": "task_tracker",
+      "payload": {
+        "taskId": "task-map-spread",
+        "label": "梳理扩散路径",
+        "state": "current",
+        "autoCompletePrevious": true
+      },
+      "priority": 76,
+      "enabled": true
+    },
+    {
+      "id": "event-summary-spread",
+      "type": "summary_show",
+      "startTime": 432,
+      "endTime": 444,
+      "targetComponent": "warning_panel",
+      "payload": {
+        "stageId": "stage-spread",
+        "title": "阶段小结",
+        "text": "智人扩散不是单点事件，而是迁徙、亲缘与社会结构的叠加。",
+        "bullets": ["迁徙路径", "DNA 线索", "社会结构"],
+        "markStageCompleted": true,
+        "syncBottomStatus": true
+      },
+      "animation": {
+        "enter": "fade_up",
+        "exit": "fade",
+        "durationMs": 220
+      },
+      "priority": 88,
+      "enabled": true
+    },
+    {
+      "id": "event-stage-modern",
+      "type": "stage_change",
+      "startTime": 450,
+      "targetComponent": "course_stage_bar",
+      "payload": {
+        "stageId": "stage-modern",
+        "status": "current",
+        "syncMapNode": true,
+        "syncDefaultTask": true,
+        "syncDefaultHint": true
+      },
+      "priority": 80,
+      "enabled": true,
+      "label": "进入现代连接"
+    },
+    {
+      "id": "event-task-spread-done",
+      "type": "task_done",
+      "startTime": 448,
+      "targetComponent": "task_tracker",
+      "payload": {
+        "taskId": "task-map-spread",
+        "label": "梳理扩散路径",
+        "state": "completed"
+      },
+      "priority": 77,
+      "enabled": true
+    },
+    {
+      "id": "event-map-modern",
+      "type": "map_node_active",
+      "startTime": 450.5,
+      "targetComponent": "chapter_map",
+      "payload": {
+        "nodeId": "node-modern",
+        "label": "现代",
+        "state": "current",
+        "completePrevious": true
+      },
+      "animation": {
+        "enter": "node_glow",
+        "durationMs": 300
+      },
+      "priority": 70,
+      "enabled": true
+    },
+    {
+      "id": "event-task-modern",
+      "type": "task_active",
+      "startTime": 454,
+      "targetComponent": "task_tracker",
+      "payload": {
+        "taskId": "task-modern-link",
+        "label": "连接现代世界",
+        "state": "current",
+        "autoCompletePrevious": true
+      },
+      "priority": 76,
+      "enabled": true
+    },
+    {
+      "id": "event-homework-modern",
+      "type": "homework_show",
+      "startTime": 485,
+      "endTime": 500,
+      "targetComponent": "warning_panel",
+      "payload": {
+        "hintId": "hint-homework-story",
+        "title": "复盘挑战",
+        "text": "找一个现代组织，写下它让陌生人合作的共同故事。",
+        "actionLabel": "拆解一个共同故事",
+        "checklist": ["选一个组织", "找共同信念", "说明协作规则"],
+        "taskId": "task-modern-link",
+        "syncTaskTracker": true,
+        "syncBottomStatus": true
+      },
+      "animation": {
+        "enter": "fade_up",
+        "exit": "fade",
+        "durationMs": 220
+      },
+      "priority": 92,
+      "enabled": true
+    }
+  ],
+  "render": {
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "format": "mp4",
+    "outputName": "lesson-01-sample.mp4",
+    "outputDir": "out",
+    "durationMode": "auto",
+    "durationSeconds": 503.942676,
+    "codec": "h264",
+    "videoCodec": "h264",
+    "audioEnabled": true,
+    "quality": "standard"
+  }
+}
