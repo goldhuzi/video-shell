@@ -27,6 +27,12 @@ export const isPathInside = (parentDir: string, childPath: string): boolean => {
   return Boolean(relative) && !relative.startsWith("..") && !path.isAbsolute(relative);
 };
 
+export const assertSafeLessonId = (lessonId: string): void => {
+  if (!/^[A-Za-z0-9._-]+$/.test(lessonId)) {
+    throw new Error(`lessonId 只能包含英文字母、数字、点、下划线和短横线：${lessonId}`);
+  }
+};
+
 const resolveRelativeToPublic = (normalizedSrc: string): string | null => {
   if (normalizedSrc.startsWith("/input/")) {
     return normalizedSrc.slice(1);
@@ -135,6 +141,7 @@ export const resolvePublicAssetPath = (src?: string): ResolvedPublicAssetPath =>
   };
 };
 
-export const lessonPathForId = (lessonId: string): string =>
-  path.join(lessonsDir, `${lessonId}.json`);
-
+export const lessonPathForId = (lessonId: string): string => {
+  assertSafeLessonId(lessonId);
+  return path.join(lessonsDir, `${lessonId}.json`);
+};

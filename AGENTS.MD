@@ -66,11 +66,13 @@ README.md 负责面向人和新 Agent 的项目入口；AGENTS.MD 负责长期�
 10. 第 7 阶段：HUD 视觉精修与默认模板定稿。
 11. 第 8 阶段：用户真实授权素材验收与发布前视觉 QA。
 12. 第 8 阶段审查：真实单课样片生产审查，有条件通过。
-13. Agent 协作设计：Course HUD Director Agent 总指挥工作流。
+13. 第 9 阶段：批量生产与本地项目管理 MVP。
+14. 第 10 阶段：团队交付文档与操作手册。
+15. Agent 协作设计：Course HUD Director Agent 总指挥工作流。
 
-当前已创建 React + TypeScript + Vite + Remotion 工程骨架，完成可编辑 lesson 配置的编辑器 MVP，完成简化时间轴阶段/事件编辑与 HUD 联动预览，并接入第 6 阶段本地单节课渲染链路。第 7 阶段已将默认视觉模板收敛为 `default-ai-tactical` / `AI Tactical HUD` / “AI 战术课程指挥界面”。第 8 阶段已使用用户提供的真实主课程视频创建 `lesson-01.sample`，跑通 preflight、smoke、still、clip 和完整 MP4 渲染，输出 `out/lesson-01-sample.mp4`。第 8 阶段审查结论为有条件通过，无 P0 阻断项。
+当前已创建 React + TypeScript + Vite + Remotion 工程骨架，完成可编辑 lesson 配置的编辑器 MVP，完成简化时间轴阶段/事件编辑与 HUD 联动预览，并接入第 6 阶段本地单节课渲染链路。第 7 阶段已将默认视觉模板收敛为 `default-ai-tactical` / `AI Tactical HUD` / “AI 战术课程指挥界面”。第 8 阶段已使用用户提供的真实主课程视频创建 `lesson-01.sample`，跑通 preflight、smoke、still、clip 和完整 MP4 渲染，输出 `out/lesson-01-sample.mp4`。第 9 阶段已新增本地课程 manifest、lesson 清单、复制、批量校验、批量预检、批量渲染、失败重试和批量报告能力。第 10 阶段已将项目整理为小团队可执行的中文交付文档体系，新增新人入口、用户手册、生产 SOP、角色分工、命令参考、素材规范、配置指南、时间轴指南、批量手册、QA、故障排查、交付清单、维护指南、文档索引和交接说明。
 
-当前建议下一步进入第 9 阶段：实现 lesson JSON 导入能力，增加按 lesson id 输入的 HUD 状态测试脚本，并继续收敛编辑器预览 HUD 与 Remotion HUD 的无交互展示组件。`lesson-01.sample` 已证明一条真实单课样片链路可出片，但不代表批量生产、长讲师视频小窗、自动字幕、AI 自动识别、云端渲染或复杂剪辑能力已经完成。若第 9 阶段被定义为“批量生产与项目管理”，必须先关闭第 8 阶段审查 P1。
+当前建议下一步进入小团队试运行，让真实团队成员不依赖开发者独立完成 1-3 节课生产；再根据反馈实现 lesson JSON 导入能力、still contact sheet、`out/batches/{batchId}/` 批次归档和实时 state 文件。`lesson-01.sample` 已证明一条真实单课样片链路可出片；第 9 阶段已证明本地小团队批量工具链可用；第 10 阶段已证明文档体系具备试运行条件，但不代表正式批量生产稳定性、长讲师视频小窗、自动字幕、AI 自动识别、云端渲染或复杂剪辑能力已经完成。
 
 GitHub 公开发布决策：
 
@@ -784,3 +786,133 @@ GitHub 公开发布决策：
 2. 优先实现 lesson JSON 导入能力，让导出的或新增的 lesson 配置可重新进入编辑器。
 3. 增加按 lesson id 和时间点输入的 HUD 状态测试脚本，覆盖 `lesson-01.sample` 的 0、30、92、146、176、240、288、300、432、450、485、500 秒。
 4. 再推进 HUD 展示组件收敛、自动 contact sheet 和发布前视觉 QA 截图对照。
+
+## 第 9 阶段成果记忆
+
+阶段目标：
+1. 启动 Course HUD Director Agent，按事实边界、录制运营和证据验收岗位分工推进第 9 阶段。
+2. 为《视频课程套壳》新增小团队本地批量生产能力：manifest、lesson 清单、复制、批量校验、批量预检、批量渲染、失败重试和报告。
+3. 严格保持项目边界，不做云端、登录、数据库、多人实时协作、权限系统、在线后台、AI 自动识别、自动字幕、视频剪辑、Electron、OBS 插件或最终播放器控件。
+
+已完成：
+1. 新增 `src/data/course.manifest.json`，管理本地课程项目 lesson 清单。
+2. 新增 `src/schemas/course-manifest.schema.ts`，校验项目、production 策略和 lessons。
+3. 新增 `scripts/batch-utils.ts`，提供 manifest 读取、lesson 选择、报告生成和最近报告定位。
+4. 新增 `scripts/list-lessons.ts`，实现 `npm run list:lessons`。
+5. 新增 `scripts/create-lesson.ts`，实现 `npm run create:lesson -- --from lesson-01.sample --to lesson-02`。
+6. 新增 `scripts/validate-all.ts`，实现 `npm run validate:all` 并输出批量校验报告。
+7. 新增 `scripts/preflight-all.ts`，实现 `npm run preflight:all`，复用第 6 阶段 `runRenderPreflight()`。
+8. 新增 `scripts/render-all.ts`，实现 `npm run render:all`，支持串行 full render、`--dry-run` 和 `--smoke`。
+9. 新增 `scripts/render-failed.ts`，实现 `npm run render:failed`，读取最近 render 报告并重试失败 lesson；失败项即使 disabled 或 `batchRender=false` 也会按报告明确重试。
+10. `package.json` 新增 `batch:*` 别名，指向同一批本地命令。
+11. `scripts/test-hud-state.ts` 已参数化，支持 `--lesson` 和 `--times`；`npm test` 已纳入 `test:hud:sample`。
+12. `docs/STAGE_8_ISSUE_BACKLOG.md` 已结构化为 issue 表。
+13. 新增 `docs/STAGE_9_BATCH_PRODUCTION_NOTES.md`，并同步 README 文档地图与阶段记忆。
+14. 批量 preflight / render 使用 manifest `project.defaultOutputDir`，当前 full 输出到 `out/renders/`，smoke 输出到 `out/renders/smoke/`。
+15. `scripts/media-paths.ts` 对 lesson id 做路径安全校验，只允许英文字母、数字、点、下划线和短横线。
+
+关键产物：
+1. `src/data/course.manifest.json`：本地课程 manifest。
+2. `src/schemas/course-manifest.schema.ts`：manifest schema。
+3. `scripts/batch-utils.ts`：批量脚本公共工具与报告工具。
+4. `scripts/list-lessons.ts`：lesson 清单命令。
+5. `scripts/create-lesson.ts`：复制 lesson 配置命令。
+6. `scripts/validate-all.ts`：批量 schema 校验。
+7. `scripts/preflight-all.ts`：批量渲染前检查。
+8. `scripts/render-all.ts`：批量串行渲染。
+9. `scripts/render-failed.ts`：失败重试。
+10. `docs/STAGE_9_BATCH_PRODUCTION_NOTES.md`：第 9 阶段说明。
+
+已冻结决策：
+1. 第 9 阶段是“小团队本地批量生产工具链 MVP”，不是正式云端批量生产系统。
+2. 批量层只编排现有单节课 preflight/render 能力，不重写第 6 阶段渲染器。
+3. 批量 full render 串行执行，`maxParallelRenders=1`。
+4. `create:lesson` 只复制 lesson JSON，不复制、移动或重命名用户素材。
+5. 新复制 lesson 默认 `batchRender=false`，必须人工替换素材、复核阶段和事件后再打开批量渲染。
+6. `lesson-01.sample` 继续作为第 8 阶段真实样片配置，不覆盖、不改名。
+7. 默认 manifest 排除占位 `lesson-01` 和 `lesson-render-fixture` 的真实批量渲染，避免混淆占位/fixture 与真实课程 lesson。
+8. 第 9 阶段不承诺正式批量生产稳定性；进入正式批量前至少需要另一条真实课程完整验证。
+9. 批量输出目录以 manifest 的 `project.defaultOutputDir` 为准；当前报告目录仍为 `out/reports/`。
+
+后续接手注意：
+1. `npm run render:all` 可能触发长时间完整渲染，日常验证优先使用 `npm run render:all -- --dry-run` 或 `npm run render:all -- --smoke`。
+2. `npm run validate:all` 默认会校验 manifest 中所有 lesson，包括 disabled；`preflight:all` 默认只处理 enabled。
+3. 批量报告输出到 `out/reports/`，并维护 `batch-validate-latest.*`、`batch-preflight-latest.*`、`batch-render-latest.*`。
+4. `render:failed` 依赖最近一次 `batch-render-latest.json`；如果要指定旧报告，用 `--report path/to/report.json`。重试选择按失败报告里的 lesson id 进行，不再受默认 `enabled` / `batchRender` 过滤影响。
+5. `lesson-01.sample` 的阶段、提示和作业文案仍需课程主理人复核。
+6. 讲师长视频小窗链路仍未验收，当前真实样片采用头像 fallback 和 `main-only` 音频。
+
+下一阶段建议：
+1. 实现 lesson JSON 导入能力，让导出的或复制出的 lesson 可重新进入编辑器。
+2. 增加 still contact sheet 自动生成脚本，服务批量 QA。
+3. 增加 `out/batches/{batchId}/` 批次归档和实时 state 文件，增强长批次中断恢复。
+4. 为批量报告增加 issue code 聚合、next action 和 QA 证据链接。
+5. 至少再用一条不同真实课程素材跑通 preflight、smoke、still、clip、full render 和 QA 记录，再讨论正式批量生产稳定性。
+
+## 第 10 阶段成果记忆
+
+阶段目标：
+1. 启动 Course HUD Director Agent，按事实边界、生产运营和资料包文档岗位分工推进第 10 阶段。
+2. 将项目整理成小团队可持续使用的本地课程视频 HUD 套壳生产系统。
+3. 只做文档交付、流程说明、检查清单、故障排查、团队角色说明和维护说明，不开发新功能。
+
+已完成：
+1. 新增 `docs/START_HERE.md`，作为新人第一入口。
+2. 新增 `docs/USER_GUIDE.md`，覆盖素材、配置、时间轴、校验、单节渲染、批量渲染和 QA。
+3. 新增 `docs/TEAM_PRODUCTION_SOP.md`，按 SOP-01 到 SOP-13 描述小团队生产流程。
+4. 新增 `docs/ROLE_GUIDE.md`，明确课程主理人、后期制作人员、内容助理、质检人员和技术维护人员职责。
+5. 新增 `docs/COMMAND_REFERENCE.md`，按真实 `package.json` scripts 写命令参考，并明确当前不存在的命令。
+6. 新增 `docs/ASSET_NAMING_AND_FOLDER_SPEC.md`，按当前代码和 `.gitignore` 冻结素材目录和命名规范。
+7. 新增 `docs/LESSON_CONFIG_GUIDE.md`，解释 `meta`、`media`、`audio`、`speaker`、`layout`、`warning`、`tasks`、`chapterMap`、`stages`、`timelineEvents` 和 `render`。
+8. 新增 `docs/TIMELINE_EVENT_GUIDE.md`，解释当前推荐事件类型和最终视频无交互边界。
+9. 新增 `docs/BATCH_PRODUCTION_GUIDE.md`，覆盖 manifest、lesson 复制、批量 validate/preflight/render、smoke、失败重试和报告。
+10. 新增 `docs/QA_CHECKLIST.md`、`docs/TROUBLESHOOTING.md` 和 `docs/RELEASE_CHECKLIST.md`。
+11. 新增 `docs/MAINTENANCE_GUIDE.md` 和 `docs/DOCS_INDEX.md`。
+12. 新增 `docs/STAGE_10_HANDOFF_NOTES.md`，记录本阶段完成内容、未做内容、命令一致性、路径一致性、已知限制和试运行建议。
+13. 新增 `docs/STAGE_10_HANDOFF_REVIEW.md`，第 10 阶段审查结论为通过，允许进入小团队试运行。
+14. 新增 `docs/superpowers/plans/2026-06-18-stage-10-handoff-docs.md`，记录本阶段执行计划。
+15. README 已从长阶段记忆收敛为项目入口，详细文档入口转到 `docs/*` 和 `docs/DOCS_INDEX.md`。
+
+关键产物：
+1. `README.md`：第 10 阶段后的项目入口。
+2. `docs/START_HERE.md`：新人入门。
+3. `docs/USER_GUIDE.md`：完整用户手册。
+4. `docs/TEAM_PRODUCTION_SOP.md`：团队生产 SOP。
+5. `docs/COMMAND_REFERENCE.md`：命令参考。
+6. `docs/ASSET_NAMING_AND_FOLDER_SPEC.md`：素材规范。
+7. `docs/LESSON_CONFIG_GUIDE.md`：lesson 配置指南。
+8. `docs/TIMELINE_EVENT_GUIDE.md`：时间轴事件指南。
+9. `docs/BATCH_PRODUCTION_GUIDE.md`：批量生产手册。
+10. `docs/QA_CHECKLIST.md`：质量检查清单。
+11. `docs/TROUBLESHOOTING.md`：故障排查。
+12. `docs/RELEASE_CHECKLIST.md`：交付清单。
+13. `docs/MAINTENANCE_GUIDE.md`：维护指南。
+14. `docs/DOCS_INDEX.md`：文档索引。
+15. `docs/STAGE_10_HANDOFF_NOTES.md`：阶段交接。
+16. `docs/STAGE_10_HANDOFF_REVIEW.md`：阶段审查报告。
+
+已冻结决策：
+1. 第 10 阶段只做文档交付，不新增云端、登录、数据库、复杂编辑器、AI 自动识别、自动字幕、自定义播放器或核心渲染功能。
+2. 第 10 阶段所有命令以当前 `package.json` 为准，不虚构命令。
+3. 当前正式单节链路为 `preflight:render`、`render:smoke`、`render:still`、`render:clip`、`render:lesson`。
+4. `render:sample` 只是早期开发样片脚本，硬编码读取 `lesson-01.json` 并输出 60 秒样片，不作为正式验收命令。
+5. 批量 smoke 使用 `npm run render:all -- --smoke`；当前没有 `render:smoke:all`。
+6. 当前没有 `--skip-existing`，输出已存在时渲染层会提示并覆盖。
+7. 操作素材目录以 `public/input/videos/`、`public/input/speakers/`、`public/input/images/` 为准；旧 `docs/MEDIA_ASSET_SPEC.md` 中早期目录仅作历史参考。
+8. 最终 MP4 不得出现播放器控件；CourseStageBar 是学习导航，不是播放器进度条；主视频永远优先。
+
+后续接手注意：
+1. 第 9 阶段新增的批量脚本、manifest 和 schema 在当前工作区可用，发布前必须确认它们已被纳入提交。
+2. `lesson-01.sample` 的讲师视频历史上位于 `public/input/videos/lesson-01-speaker.mp4.mp4`，新项目推荐使用 `public/input/speakers/`。
+3. `validate:all` 只校验 JSON/schema，不检查真实素材；素材检查使用 `preflight:all`。
+4. `preflight:all` 默认只处理 `enabled=true` lesson；`render:all` 默认只处理 `enabled=true` 且 `batchRender=true` lesson。
+5. 批量报告不替代人工 QA，仍需 still/clip 和质检人员目检。
+6. 当前没有 lesson JSON 导入、still contact sheet、`out/batches/{batchId}/` 实时状态、自动视觉 QA、云端队列、自动字幕或 AI 自动识别。
+
+下一阶段建议：
+1. 进入小团队试运行，让真实团队成员不依赖开发者，独立完成至少 1-3 节课的视频套壳生产。
+2. 试运行后优先补 lesson JSON 导入能力。
+3. 增加 still contact sheet，降低批量 QA 人工打开多张图片的成本。
+4. 增加 `out/batches/{batchId}/` 批次归档和实时 state 文件。
+5. 为批量报告增加 issue code 聚合、next action 和 QA 证据链接。
+6. 再用至少一条不同真实课程素材验证完整链路后，讨论正式批量生产稳定性。

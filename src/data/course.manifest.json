@@ -1,0 +1,57 @@
+{
+  "schemaVersion": "0.9.0",
+  "project": {
+    "id": "video-shell-local-course",
+    "name": "视频课程套壳本地课程项目",
+    "courseTitle": "视频课程套壳批量生产样例",
+    "description": "第 9 阶段本地项目 manifest，用于管理多 lesson 配置、批量预检、批量渲染和本地报告。",
+    "defaultOutputDir": "out/renders",
+    "reportDir": "out/reports",
+    "notes": "本 manifest 只服务本地小团队批量前准备，不代表云端队列、自动生成或正式批量交付稳定性。"
+  },
+  "production": {
+    "renderMode": "sequential",
+    "stopOnError": false,
+    "requirePreflightBeforeRender": true,
+    "maxParallelRenders": 1
+  },
+  "lessons": [
+    {
+      "lessonId": "lesson-01.sample",
+      "order": 1,
+      "title": "真实单课样片",
+      "status": "needs-review",
+      "enabled": true,
+      "batchRender": true,
+      "qaStatus": "rendered",
+      "outputName": "lesson-01-sample.mp4",
+      "tags": ["real-sample", "stage-8"],
+      "notes": "第 8 阶段真实样片配置。阶段和 HUD 文案仍需课程主理人复核。"
+    },
+    {
+      "lessonId": "lesson-01",
+      "order": 2,
+      "title": "工程占位示例",
+      "status": "draft",
+      "enabled": false,
+      "batchRender": false,
+      "qaStatus": "blocked",
+      "outputName": "lesson-01-final.mp4",
+      "tags": ["placeholder"],
+      "notes": "保留第 3-7 阶段示例配置；主视频路径仍是占位素材，不纳入默认批量 preflight/render。"
+    },
+    {
+      "lessonId": "lesson-render-fixture",
+      "order": 99,
+      "title": "渲染链路安全小样",
+      "status": "ready",
+      "enabled": false,
+      "batchRender": false,
+      "qaStatus": "reviewed",
+      "outputName": "lesson-render-fixture-final.mp4",
+      "tags": ["fixture", "stage-6"],
+      "notes": "用于第 6 阶段脚本和渲染链路回归，不作为真实课程 lesson。"
+    }
+  ],
+  "updatedAt": "2026-06-18T00:00:00.000Z"
+}

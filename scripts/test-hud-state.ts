@@ -1,18 +1,16 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { lessonProjectSchema, type LessonProjectConfig } from "../src/schemas/lesson.schema";
 import { deriveHudState } from "../src/utils/timeline";
-
-const rootDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const lessonPath = path.join(rootDir, "src", "data", "lessons", "lesson-01.json");
+import { lessonPathForId } from "./media-paths";
+import { parseBatchArgs, parseCsvValue } from "./batch-utils";
+import { parseLessonCliArgs } from "./render-utils";
 
 const cloneLesson = (lesson: LessonProjectConfig): LessonProjectConfig =>
   JSON.parse(JSON.stringify(lesson)) as LessonProjectConfig;
 
-const loadLesson = async () => {
-  const raw = JSON.parse(await readFile(lessonPath, "utf8")) as unknown;
+const loadLesson = async (lessonId: string) => {
+  const raw = JSON.parse(await readFile(lessonPathForId(lessonId), "utf8")) as unknown;
   return lessonProjectSchema.parse(raw);
 };
 
@@ -22,8 +20,29 @@ const getActiveEventIds = (state: ReturnType<typeof deriveHudState>) =>
 const getPersistentEventIds = (state: ReturnType<typeof deriveHudState>) =>
   state.persistentStateEvents.map((event) => event.id);
 
-const main = async () => {
-  const lesson = await loadLesson();
+const runGenericTimeAssertions = (
+  lesson: LessonProjectConfig,
+  times: number[],
+): void => {
+  for (const currentTime of times) {
+    const state = deriveHudState(lesson, currentTime);
+    assert.equal(state.currentTime, currentTime, `${currentTime} 秒状态应保留输入时间`);
+    assert.ok(
+      Object.keys(state.stageStatuses).length > 0,
+      `${currentTime} 秒应产出阶段状态`,
+    );
+    assert.ok(
+      Object.keys(state.taskStatuses).length > 0,
+      `${currentTime} 秒应产出任务状态`,
+    );
+    assert.ok(
+      Object.keys(state.chapterMapStatuses).length > 0,
+      `${currentTime} 秒应产出地图状态`,
+    );
+  }
+};
+
+const runLesson01Assertions = (lesson: LessonProjectConfig): void => {
   const stateAt = (currentTime: number, targetLesson = lesson) =>
     deriveHudState(targetLesson, currentTime);
 
@@ -117,8 +136,49 @@ const main = async () => {
   assert.equal(bottomOnlySummaryAt316.activeSummary?.sourceEventId, "event-summary-package", "bottom-only 总结仍应进入 activeSummary");
   assert.equal(bottomOnlySummaryAt316.activeBottomStatus?.sourceEventId, "event-summary-package", "targetComponent=bottom_status_hud 的总结应进入 BottomStatusHud");
   assert.equal(bottomOnlySummaryAt316.activeWarning?.id, "hint-package-summary", "targetComponent=bottom_status_hud 的总结不应覆盖 WarningPanel");
+};
 
-  console.log("HUD 状态测试通过：lesson-01 关键时间点与第 6 阶段状态语义均符合预期。");
+const runLesson01SampleAssertions = (lesson: LessonProjectConfig): void => {
+  const stateAt = (currentTime: number) => deriveHudState(lesson, currentTime);
+
+  assert.equal(stateAt(0).currentStageId, "stage-opening", "0 秒应处于真实样片开场阶段");
+  assert.equal(stateAt(30).activeWarning?.sourceEventId, "event-tip-opening", "30 秒应显示开场提示事件");
+  assert.equal(stateAt(92).currentStageId, "stage-species", "92 秒应进入物种阶段");
+  assert.equal(stateAt(146).activeWarning?.sourceEventId, "event-tip-species", "146 秒应显示物种时间尺度提示");
+  assert.equal(stateAt(176).currentStageId, "stage-cognitive", "176 秒应进入认知革命阶段");
+  assert.equal(stateAt(240).activeWarning?.sourceEventId, "event-warning-cooperation", "240 秒应显示协作警告");
+  assert.equal(stateAt(240).activeBottomStatus?.sourceEventId, "event-warning-cooperation", "240 秒警告应同步底部状态");
+  assert.deepEqual(stateAt(288).activeSkillIds, ["ability-shared-story"], "288 秒应解锁共同故事能力");
+  assert.equal(stateAt(300).currentStageId, "stage-spread", "300 秒应进入扩散阶段");
+  assert.equal(stateAt(432).activeSummary?.sourceEventId, "event-summary-spread", "432 秒应显示扩散阶段总结");
+  assert.equal(stateAt(450).currentStageId, "stage-modern", "450 秒应进入现代阶段");
+  assert.equal(stateAt(485).activeHomework?.sourceEventId, "event-homework-modern", "485 秒应显示复盘挑战");
+  assert.equal(stateAt(500).activeHomework?.sourceEventId, "event-homework-modern", "500 秒仍应显示复盘挑战结束帧");
+};
+
+const main = async () => {
+  const args = parseBatchArgs();
+  const lessonId = parseLessonCliArgs();
+  const times = parseCsvValue(args.values.get("--times"))
+    .map((value) => Number.parseFloat(value))
+    .filter((value) => Number.isFinite(value));
+  const lesson = await loadLesson(lessonId);
+
+  if (times.length) {
+    runGenericTimeAssertions(lesson, times);
+  }
+
+  if (lessonId === "lesson-01") {
+    runLesson01Assertions(lesson);
+  } else if (lessonId === "lesson-01.sample") {
+    runLesson01SampleAssertions(lesson);
+  } else if (!times.length) {
+    throw new Error("非默认 lesson 需要通过 --times 指定至少一个 HUD 状态测试时间点。");
+  }
+
+  console.log(
+    `HUD 状态测试通过：${lessonId}${times.length ? `，已检查 ${times.length} 个输入时间点` : ""}。`,
+  );
 };
 
 void main().catch((error) => {
